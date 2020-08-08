@@ -1,0 +1,99 @@
+" General
+
+set relativenumber
+syntax on
+"set tw=79
+"set colorcolumn=80
+"highlight ColorColumn ctermbg=233
+set clipboard=unnamed
+" Hit ALT to use mouse
+set mouse=a
+" Setup backspace
+set bs=2
+
+"Tab to spaces
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set shiftround
+set expandtab
+
+"Make j and k work through line wrap
+:nnoremap j gj
+:nnoremap k gk
+
+"Make search case insensitive
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+" Set map leader
+let mapleader = ","
+
+"Move around tabs
+map <Leader>n <esc>:tabprevious<CR>
+map <Leader>m <esc>:tabnext<CR>
+
+"Move around windows
+map <c-j> <c-w>j
+map <c-k> <c-w>k
+map <c-l> <c-w>l
+map <c-h> <c-w>h
+
+"Better tabs
+vnoremap < <gv
+vnoremap > >gv
+
+
+" Spell check
+" setlocal spell
+" set spelllang=en_gb
+" inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+
+" Plugin manager
+call pathogen#infect()
+
+"Vim-powerline
+set laststatus=2
+
+"CtrlP
+let g:ctrlp_max_height = 30
+set wildignore+=*.pyc
+
+"Auto complete (JediVim and Omni Complete)
+
+set completeopt=longest,menuone
+function! OmniPopup(action)
+    if pumvisible()
+        if a:action == 'j'
+            return "\<C-N>"
+        elseif a:action == 'k'
+            return "\<C-P>"
+        endif
+    endif
+    return a:action
+endfunction
+
+inoremap <silent><C-j> <C-R>=OmniPopup('j')<CR>
+inoremap <silent><C-k> <C-R>=OmniPopup('k')<CR>
+
+"Vimtex
+let g:tex_flavor='latex'
+
+"UltiSnips
+"let g:UltiSnipsSnippetDirecotries = ['~/.vim/UltiSnips', 'UltiSnips']
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBakcwardTrigger = '<tab>'
+
+
+"Python folding
+set nofoldenable
+
+set nocompatible
+filetype off
+
+autocmd FileType tex nmap <buffer> <C-T> :!xelatex %<CR>
+autocmd FileType tex nmap <buffer> T :!zathura %:r.pdf<CR><CR>
+filetype plugin indent on
