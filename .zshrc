@@ -102,4 +102,11 @@ alias silva="source ~/SilvaUI/venv/ubuntu/bin/activate; cd ~/SilvaUI/main/"
 alias p="python3"
 alias v="vim"
 
+# LaTeX Configuration
+
+export PATH=/usr/local/texlive/2020/bin/x86_64-linux:$PATH
+export MANPATH=/usr/local/texlive/2020/texmf-dist/doc/man:$MANPATH
+export INFOPATH=/usr/local/texlive/2020/texmf-dist/doc/info:$INFOPATH
+
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
