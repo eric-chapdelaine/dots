@@ -94,9 +94,18 @@ set nofoldenable
 set nocompatible
 filetype off
 
+"Autosaving
+let g:auto_save = 1
+
+"LaTeX Configs
+let g:livepreview_previewer = 'zathura'
+let g:auto_save_in_insert_move = 0
+
 noremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "'.b:vimtex.root.'/figures/"'<CR><CR>:w<CR>
 nnoremap <C-f> : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
 
 autocmd FileType tex nmap <buffer> <C-T> :!xelatex %<CR>
+"autocmd FileType tex nmap <buffer> <C-T> :!xelatex master.tex<CR>
 autocmd FileType tex nmap <buffer> T :!zathura %:r.pdf<CR><CR>
+"autocmd FileType tex nmap <buffer> T : silent exec '!zathura master.pdf'<CR><CR>
 filetype plugin indent on
