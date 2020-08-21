@@ -1,15 +1,26 @@
 [bar/example]
+monitor = ${env:MONITOR:}
 width = 100%
 height = 40
 
-module-margin = 10
+module-margin = 5
 
 font-0 = "Roboto:size=11:weight=bold;2"
 background = #2e3440
 foreground = #c8c7d0
 modules-left = i3
 modules-center = cal
-modules-right = date 
+modules-right = cpu memory date 
+
+[module/memory]
+type = internal/memory
+interval = 2
+label = Memory: %gb_used%/%gb_free%
+
+[module/cpu]
+type = internal/cpu
+interval = 2
+label = CPU: %percentage%%
 
 [module/cal]
 type = custom/script
@@ -21,7 +32,7 @@ content-foreground = #fff
 [module/date]
 type = internal/date
 
-date = %A (%m-%d) %I:%M 
+date = %A (%m-%d) %I:%M %p 
 content-foreground = #fff
 
 [module/i3]
@@ -31,7 +42,7 @@ index-sort = true
 wrapping-scroll = false
 
 ; Only show workspaces on the same output as the bar
-;pin-workspaces = true
+pin-workspaces = true
 
 label-mode-padding = 2
 label-mode-foreground = #000
