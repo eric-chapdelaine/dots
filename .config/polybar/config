@@ -8,9 +8,27 @@ module-margin = 5
 font-0 = "Roboto:size=11:weight=bold;2"
 background = #2e3440
 foreground = #c8c7d0
-modules-left = i3
+modules-left = i3 cpu memory 
 modules-center = cal
-modules-right = cpu memory date 
+modules-right = network battery date 
+
+[module/network]
+type = internal/network
+format-connected = <ramp-signal>
+interface = wlp0s20f3
+ramp-signal-0 = 0
+ramp-signal-1 = 1
+ramp-signal-2 = 2
+ramp-signal-3 = 3
+ramp-signal-4 = 4
+ramp-signal-5 = 5
+
+
+[module/battery]
+type = internal/battery
+
+battery = BAT0
+adapter = AC 
 
 [module/memory]
 type = internal/memory
