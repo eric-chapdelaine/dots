@@ -105,8 +105,12 @@ noremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "
 "nnoremap <C-f> : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
 nnoremap <C-f> : silent exec '!inkscape-figures edit ./figures/ > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
 
+"Optimized note-taking with LaTeX
+nnoremap <Leader>t <Esc>:silent exec '!xelatex -interaction=nonstopmode master.tex > /dev/null 2>&2 &' <Esc>:redraw!<CR>
+nnoremap <Leader>z <Esc>:silent exec '!zathura master.pdf > /dev/null 2>&2 &'
+
 autocmd FileType tex nmap <buffer> <C-T> :!xelatex %<CR>
 "autocmd FileType tex nmap <buffer> <C-T> :!xelatex master.tex<CR>
-autocmd FileType tex nmap <buffer> T :!zathura %:r.pdf<CR><CR>
+"autocmd FileType tex nmap <buffer> T :!zathura %:r.pdf<CR><CR>
 "autocmd FileType tex nmap <buffer> T : silent exec '!zathura master.pdf'<CR><CR>
 filetype plugin indent on
