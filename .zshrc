@@ -101,6 +101,7 @@ alias sl="ls"
 alias silva="source ~/SilvaUI/venv/ubuntu/bin/activate; cd ~/SilvaUI/main/"
 alias p="python3"
 alias v="vim"
+alias open="xdg-open"
 
 # LaTeX Configuration
 
