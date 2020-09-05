@@ -37,7 +37,7 @@ def main():
     # Call the actual API
     gNow = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' is to indicate UTC time
     #print('Getting the next 10 events')
-    events_result = service.events().list(calendarId='primary', timeMin=gNow,
+    events_result = service.events().list(calendarId='kqhr2ir6o3nko1i67sd2vdtd0g@group.calendar.google.com', timeMin=gNow,
                                         maxResults=1, singleEvents=True,
                                         orderBy='startTime').execute()
     events = events_result.get('items', [])
