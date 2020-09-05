@@ -22,6 +22,11 @@ set expandtab
 :nnoremap j gj
 :nnoremap k gk
 
+"Hard Line Wrap for prose
+autocmd BufRead,BufNewFile *.md setlocal formatoptions=ant
+autocmd BufRead,BufNewFile *.md setlocal textwidth=80
+autocmd BufRead,BufNewFile *.md setlocal wrapmargin=0
+
 "Make search case insensitive
 set hlsearch
 set incsearch
@@ -47,9 +52,9 @@ vnoremap > >gv
 
 
 " Spell check
-" setlocal spell
-" set spelllang=en_gb
-" inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+setlocal spell
+"set spelllang=en_gb
+inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 
 " Plugin manager
 call pathogen#infect()
