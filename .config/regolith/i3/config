@@ -531,3 +531,6 @@ exec --no-startup-id $i3-wm.program.3
 
 #User entered
 exec --no-startup-id $HOME/.config/polybar/launch.sh
+
+#Vim-anywhere
+bindsym $mod+v exec ~/.vim-anywhere/bin/run
