@@ -17,6 +17,13 @@ def math():
 		return False
 endglobal
 
+snippet standalone "Standalone file template" b
+\documentclass[convert]{standalone}
+\begin{document}
+$0
+\end{document}
+endsnippet
+
 snippet master "Master file template" b
 \documentclass{article}
 \input{../preamble.tex}
