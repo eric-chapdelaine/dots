@@ -534,3 +534,4 @@ exec --no-startup-id $HOME/.config/polybar/launch.sh
 
 #Vim-anywhere
 bindsym $mod+v exec ~/.vim-anywhere/bin/run
+for_window [title="vim-anywhere"] floating enable 
