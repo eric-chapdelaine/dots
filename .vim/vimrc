@@ -97,7 +97,7 @@ let g:UltiSnipsJumpBakcwardTrigger = '<tab>'
 set nofoldenable
 
 set nocompatible
-filetype off
+filetype plugin on
 
 "Autosaving
 let g:auto_save = 1
@@ -112,7 +112,7 @@ nnoremap <C-f> : silent exec '!inkscape-figures edit ./figures/ > /dev/null 2>&1
 
 "Optimized note-taking with LaTeX
 nnoremap <Leader>t <Esc>:silent exec '!xelatex -interaction=nonstopmode master.tex > /dev/null 2>&2 &' <Esc>:redraw!<CR>
-nnoremap <Leader>z <Esc>:silent exec '!zathura master.pdf > /dev/null 2>&2 &'
+nnoremap <Leader>z <Esc>:silent exec '!zathura %:r.pdf > /dev/null 2>&2 &'
 
 autocmd FileType tex nmap <buffer> <C-T> :!xelatex %<CR>
 "autocmd FileType tex nmap <buffer> <C-T> :!xelatex master.tex<CR>
