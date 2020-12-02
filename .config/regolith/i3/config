@@ -325,7 +325,7 @@ bindsym $mod+period exec /usr/bin/i3-snapshot -c < /tmp/i3-snapshot
 
 # Toggle bar visibility
 ## Modify // Toggle Bar // <> i ##
-bindsym $mod+i bar mode toggle
+# bindsym $mod+i bar mode toggle
 
 # Cause Settings app to float above tiled windows
 floating_maximum_size -1 x -1
@@ -529,9 +529,15 @@ exec --no-startup-id $i3-wm.program.2
 set_from_resource $i3-wm.program.3 i3-wm.program.3 :
 exec --no-startup-id $i3-wm.program.3
 
-#User entered
+## User entered ##
+
+# Polybar
 exec --no-startup-id $HOME/.config/polybar/launch.sh
 
 #Vim-anywhere
 bindsym $mod+v exec ~/scripts/vim/vim-anywhere.sh
 for_window [title="vim-anywhere"] floating enable 
+
+# VimWiki
+bindsym $mod+i exec /usr/bin/x-terminal-emulator -e vim --nofork ~/vimwiki/index.wiki
+
