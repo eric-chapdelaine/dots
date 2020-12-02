@@ -112,4 +112,7 @@ export INFOPATH=/usr/local/texlive/2020/texmf-dist/doc/info:$INFOPATH
 # Remap capslock to esc
 setxkbmap -option caps:swapescape
 
+# Vim keybindings on Zsh
+set -o vi
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
