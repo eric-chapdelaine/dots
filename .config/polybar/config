@@ -9,8 +9,8 @@ font-0 = "Roboto:size=11:weight=bold;2"
 background = #2e3440
 foreground = #c8c7d0
 modules-left = i3 cpu memory 
-modules-center = date 
-modules-right = network battery
+modules-center = date
+modules-right = timer network battery
 
 [module/network]
 type = internal/network
@@ -22,7 +22,6 @@ ramp-signal-2 = 2
 ramp-signal-3 = 3
 ramp-signal-4 = 4
 ramp-signal-5 = 5
-
 
 [module/battery]
 type = internal/battery
@@ -39,6 +38,14 @@ label = Memory: %gb_used%/%gb_free%
 type = internal/cpu
 interval = 2
 label = CPU: %percentage%%
+
+[module/timer]
+type = custom/script
+exec = python3 -u ~/scripts/polybar/pomodoro/timer.py
+click-left = python3 ~/scripts/polybar/pomodoro/timer.py toggle
+click-right = python3 ~/scripts/polybar/pomodoro/timer.py next
+interval = 1
+
 
 [module/cal]
 type = custom/script
