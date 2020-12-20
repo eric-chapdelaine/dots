@@ -540,4 +540,3 @@ for_window [title="vim-anywhere"] floating enable
 
 # VimWiki
 bindsym $mod+i exec /usr/bin/x-terminal-emulator -e vim --nofork ~/vimwiki/index.wiki
-
