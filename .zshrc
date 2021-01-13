@@ -116,3 +116,7 @@ setxkbmap -option caps:swapescape
 set -o vi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Install Ruby Gems to ~/gems
+export GEM_HOME="$HOME/gems"
+export PATH="$HOME/gems/bin:$PATH"
