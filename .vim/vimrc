@@ -52,9 +52,8 @@ vnoremap > >gv
 
 
 " Spell check
-setlocal spell
-"set spelllang=en_gb
-inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+"setlocal spell
+"inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 
 " Plugin manager
 call pathogen#infect()
@@ -92,7 +91,6 @@ let g:UltiSnipsExpandTrigger = '<tab>'
 let g:UltiSnipsJumpForwardTrigger = '<tab>'
 let g:UltiSnipsJumpBakcwardTrigger = '<tab>'
 
-
 "Python folding
 set nofoldenable
 
@@ -119,3 +117,6 @@ autocmd FileType tex nmap <buffer> <C-T> :!xelatex %<CR>
 "autocmd FileType tex nmap <buffer> T :!zathura %:r.pdf<CR><CR>
 "autocmd FileType tex nmap <buffer> T : silent exec '!zathura master.pdf'<CR><CR>
 filetype plugin indent on
+
+" Allow Ultisnips to work in Markdown Files (that Vimwiki controls)
+let g:vimwiki_table_mappings = 0
