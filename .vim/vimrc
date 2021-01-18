@@ -104,9 +104,9 @@ let g:auto_save = 1
 let g:livepreview_previewer = 'zathura'
 let g:auto_save_in_insert_move = 0
 
-noremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "'.b:vimtex.root.'/figures/"'<CR><CR>:w<CR>
-"nnoremap <C-f> : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
-nnoremap <C-f> : silent exec '!inkscape-figures edit ./figures/ > /dev/null 2>&1 &'<CR><CR>:redraw!<CR>
+" Inkscape Figures shortcuts (optimized for Markdown)
+noremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "./%:r/"'<CR><CR>:w<CR>
+nnoremap <C-f> :silent exec '!inkscape-figures edit ./%:r > /dev/null 2>&1 &'<CR>:redraw!<CR>
 
 "Optimized note-taking with LaTeX
 nnoremap <Leader>t <Esc>:silent exec '!xelatex -interaction=nonstopmode master.tex > /dev/null 2>&2 &' <Esc>:redraw!<CR>
