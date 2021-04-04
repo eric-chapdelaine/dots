@@ -24,7 +24,7 @@ set expandtab
 
 "Hard Line Wrap for prose
 autocmd BufRead,BufNewFile *.md setlocal formatoptions=ant
-autocmd BufRead,BufNewFile *.md setlocal textwidth=80
+"autocmd BufRead,BufNewFile *.md setlocal textwidth=80
 autocmd BufRead,BufNewFile *.md setlocal wrapmargin=0
 
 "Make search case insensitive
@@ -52,8 +52,8 @@ vnoremap > >gv
 
 
 " Spell check
-"setlocal spell
-"inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+setlocal spell
+inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 
 " Plugin manager
 call pathogen#infect()
@@ -105,8 +105,7 @@ let g:livepreview_previewer = 'zathura'
 let g:auto_save_in_insert_move = 0
 
 " Inkscape Figures shortcuts (optimized for Markdown)
-noremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "./%:r/"'<CR><CR>:w<CR>
-nnoremap <C-f> :silent exec '!inkscape-figures edit ./%:r > /dev/null 2>&1 &'<CR>:redraw!<CR>
+nnoremap <C-f> :exec '.!~/scripts/vim/ink.py %:r "'.getline(".").'"'
 
 "Optimized note-taking with LaTeX
 nnoremap <Leader>t <Esc>:silent exec '!xelatex -interaction=nonstopmode master.tex > /dev/null 2>&2 &' <Esc>:redraw!<CR>
