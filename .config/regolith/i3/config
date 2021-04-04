@@ -539,4 +539,4 @@ bindsym $mod+v exec ~/scripts/vim/vim-anywhere.sh
 for_window [title="vim-anywhere"] floating enable 
 
 # VimWiki
-bindsym $mod+i exec /usr/bin/x-terminal-emulator -e vim --nofork ~/vimwiki/index.wiki
+bindsym $mod+i exec /usr/bin/x-terminal-emulator -e vim --nofork ~/Dropbox/index.mkdn
