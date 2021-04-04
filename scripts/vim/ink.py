@@ -8,7 +8,7 @@ if __name__ == "__main__":
     subprocess.run(["/home/emchap4/scripts/vim/ink.sh", classname, filename], capture_output=True)
 
     output = f"""<div style='width: 100%' class='ui rounded images'>
-<img class='ui image' src='./{filename}.png'>
+<img class='ui image' src='/notes/{classname}/{filename}.png'>
 </div>
 """
 
