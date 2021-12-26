@@ -13,7 +13,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 def main():
     """
-    Prints the next 10 events on the user's calendar
+    Prints the next 1 event on the user's calendar
     """
     creds = None
 
@@ -37,7 +37,9 @@ def main():
     # Call the actual API
     gNow = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' is to indicate UTC time
     #print('Getting the next 10 events')
-    events_result = service.events().list(calendarId='kqhr2ir6o3nko1i67sd2vdtd0g@group.calendar.google.com', timeMin=gNow,
+    # kr3suerpvq6uj6fcfjrhq4pd5s@group.calendar.google.com
+    # emchap4@gmail.com
+    events_result = service.events().list(calendarId=sys.argv[1], timeMin=gNow,
                                         maxResults=1, singleEvents=True,
                                         orderBy='startTime').execute()
     events = events_result.get('items', [])
@@ -65,4 +67,7 @@ def main():
 
 if __name__ == '__main__':
     os.chdir(sys.path[0])
-    main()
+    try: 
+        main()
+    except:
+        print("--")

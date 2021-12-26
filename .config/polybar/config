@@ -8,9 +8,14 @@ module-margin = 5
 font-0 = "Roboto:size=11:weight=bold;2"
 background = #2e3440
 foreground = #c8c7d0
-modules-left = i3 cpu memory 
+modules-left = i3 cal 
 modules-center = date
 modules-right = timer network battery
+; modules-center = fg
+
+[module/fg]
+type = custom/text
+content = Future Genius: Beta Masters
 
 [module/network]
 type = internal/network
@@ -49,10 +54,18 @@ interval = 1
 
 [module/cal]
 type = custom/script
-exec = python3 -u ~/scripts/gcal/cal.py
+exec = python3 -u ~/scripts/gcal/cal.py emchap4@gmail.com
 click-left = firefox 'https://calendar.google.com/calendar/b/1/r'
 tail = true
 content-foreground = #fff
+
+[module/classes]
+type = custom/script
+exec = python3 -u ~/scripts/gcal/cal.py kr3suerpvq6uj6fcfjrhq4pd5s@group.calendar.google.com
+click-left = firefox 'https://calendar.google.com/calendar/b/1/r'
+tail = true
+content-foreground = #fff
+
 
 [module/date]
 type = internal/date

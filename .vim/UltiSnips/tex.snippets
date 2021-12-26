@@ -26,17 +26,13 @@ endsnippet
 
 snippet master "Master file template" b
 \documentclass{article}
-\input{../preamble.tex}
+\usepackage[margin=1in]{geometry}
 \title{$1}
 \author{Eric Chapdelaine}
-\emailAdd{chapdelaine.e@northeastern.edu}
 
 \begin{document}
 
-\maketitle
-\newpage
 $0
-%Add Lectures Below
 
 \end{document}
 endsnippet

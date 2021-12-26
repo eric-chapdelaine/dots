@@ -105,11 +105,11 @@ let g:livepreview_previewer = 'zathura'
 let g:auto_save_in_insert_move = 0
 
 " Inkscape Figures shortcuts (optimized for Markdown)
-nnoremap <C-f> :exec '.!~/scripts/vim/ink.py %:r "'.getline(".").'"'
+nnoremap <C-f> :exec '.!~/scripts/vim/ink.py %:r "'.getline(".").'"' <Esc>
 
 "Optimized note-taking with LaTeX
 nnoremap <Leader>t <Esc>:silent exec '!xelatex -interaction=nonstopmode master.tex > /dev/null 2>&2 &' <Esc>:redraw!<CR>
-nnoremap <Leader>z <Esc>:silent exec '!zathura %:r.pdf > /dev/null 2>&2 &'
+" nnoremap <Leader>z <Esc>:silent exec '!zathura %:r.pdf > /dev/null 2>&2 &'
 
 autocmd FileType tex nmap <buffer> <C-T> :!xelatex %<CR>
 "autocmd FileType tex nmap <buffer> <C-T> :!xelatex master.tex<CR>
@@ -119,3 +119,11 @@ filetype plugin indent on
 
 " Allow Ultisnips to work in Markdown Files (that Vimwiki controls)
 let g:vimwiki_table_mappings = 0
+
+
+" WolframAlpha
+nnoremap <Leader>z :exec '.!~/scripts/vim/vimwolf.py "'.getline(".").'"' <Esc>:redraw!<CR>
+
+" yash and python
+autocmd FileType python map <buffer> <F6> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+autocmd FileType python imap <buffer> <F6> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>

@@ -98,7 +98,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias sl="ls"
-alias silva="source ~/SilvaUI/venv/ubuntu/bin/activate; cd ~/SilvaUI/main/"
 alias p="python3"
 alias v="vim"
 alias open="xdg-open"
@@ -120,3 +119,23 @@ set -o vi
 # Install Ruby Gems to ~/gems
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
+
+# Add IntelliJ IDEA to path
+export PATH=/home/emchap4/idea-IU-211.7142.45/bin:$PATH
+alias idea="idea.sh &"
+
+# OCR
+alias ocr="~/scripts/ocr.sh"
+
+# For applications that use Python
+alias python="python3"
+
+# Spacevim
+alias svim="vim -u ~/.SpaceVim/vimrc"
+
+alias ra="ranger ."
+export EDITOR='vim'
+
+export TEST_RAILS_DATABASE_PASSWORD="yellow11"
+
+alias ink="~/scripts/vim/just_ink.sh"
