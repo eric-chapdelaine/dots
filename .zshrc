@@ -136,6 +136,8 @@ alias svim="vim -u ~/.SpaceVim/vimrc"
 alias ra="ranger ."
 export EDITOR='vim'
 
-export TEST_RAILS_DATABASE_PASSWORD="yellow11"
-
 alias ink="~/scripts/vim/just_ink.sh"
+
+#McLean
+export FSLDIR=/usr/local/fsl
+export PATH=${FSLDIR}/bin:${PATH}
