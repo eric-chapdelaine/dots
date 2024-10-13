@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =1
+let g:netrw_dirhist_1='/Users/***REDACTED***/.config/yabai'
+let g:netrw_dirhist_0='/Users/***REDACTED***/mind-palace/.git/refs/heads'
+let g:netrw_dirhist_9='/Users/***REDACTED***/mind-palace/.git/refs'
+let g:netrw_dirhist_8='/Users/***REDACTED***/mind-palace/.git/objects/08'
+let g:netrw_dirhist_7='/Users/***REDACTED***/mind-palace/.git/objects'
+let g:netrw_dirhist_6='/Users/***REDACTED***/mind-palace/.git'
+let g:netrw_dirhist_5='/Users/***REDACTED***/mind-palace/.git/hooks'
+let g:netrw_dirhist_4='/Users/***REDACTED***/mind-palace/.git'
+let g:netrw_dirhist_3='/Users/***REDACTED***/ec-onboarding-infra/terraform/environments'
+let g:netrw_dirhist_2='/Users/***REDACTED***/ec-onboarding-infra/terraform'

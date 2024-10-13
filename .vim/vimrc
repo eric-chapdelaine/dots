@@ -1,0 +1,44 @@
+" General
+set relativenumber
+syntax on
+
+" Tab to spaces
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set shiftround
+set expandtab
+
+" Make j and k work through line wrap
+:nnoremap j gj
+:nnoremap k gk
+
+" Better tabs
+vnoremap < <gv
+vnoremap > >gv
+
+" Spell check
+" setlocal spell
+" inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+
+" Fix backspace
+set backspace=indent,eol,start
+
+" Allow scrolling with mouse
+set mouse=a
+
+" TODO: figure out some code completion 
+" packadd YouCompleteMe
+
+" Auto update on file change
+
+" Trigger `autoread` when files changes on disk
+" https://unix.stackexchange.com/questions/149209/refresh-changed-content-of-file-opened-in-vim/383044#383044
+" https://vi.stackexchange.com/questions/13692/prevent-focusgained-autocmd-running-in-command-line-editing-mode
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI *
+        \ if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif
+
+" Notification after file change
+" https://vi.stackexchange.com/questions/13091/autocmd-event-for-autoread
+autocmd FileChangedShellPost *
+  \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
