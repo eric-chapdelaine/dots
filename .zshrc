@@ -2,6 +2,8 @@
 # Common #
 ##########
 
+system_type=$(uname -s)
+
 # Change zsh prompt
 PS1="%1~ %# "
 
@@ -18,35 +20,38 @@ cdt() {
 # Mac Specific #
 ################
 
-alias ra="ranger ."
 
-# Use update vim
-alias vim='/opt/homebrew/bin/vim'
+if [ "$system_type" = "Darwin" ]; then
+    alias ra="ranger ."
 
-####################
-# ***REDACTED*** specific #
-####################
+    # Use update vim
+    alias vim='/opt/homebrew/bin/vim'
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+    ####################
+    # ***REDACTED*** specific #
+    ####################
 
-alias mamba="docker pull ***REDACTED***/mamba:latest && docker run -it --rm ***REDACTED***/mamba:latest"
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/***REDACTED***/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/***REDACTED***/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+    alias mamba="docker pull ***REDACTED***/mamba:latest && docker run -it --rm ***REDACTED***/mamba:latest"
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/***REDACTED***/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/***REDACTED***/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
-export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+    # The next line updates PATH for the Google Cloud SDK.
+    if [ -f '/Users/***REDACTED***/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/***REDACTED***/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 
-####################
+    # The next line enables shell command completion for gcloud.
+    if [ -f '/Users/***REDACTED***/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/***REDACTED***/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+    export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
-# TODO: have different for thinkpad
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-  
-alias ctags="/opt/homebrew/bin/ctags"
+    ####################
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+    # TODO: have different for thinkpad
+    source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    
+    alias ctags="/opt/homebrew/bin/ctags"
+
+    #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+    export SDKMAN_DIR="$HOME/.sdkman"
+    [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+fi
