@@ -1,15 +1,8 @@
 " General
-
 set relativenumber
 syntax on
-"set tw=79
-"set colorcolumn=80
-"highlight ColorColumn ctermbg=233
-set clipboard=unnamed
-" Hit ALT to use mouse
-set mouse=a
-" Setup backspace
 set bs=2
+" colorscheme slate
 
 "Tab to spaces
 set tabstop=4
@@ -52,7 +45,7 @@ vnoremap > >gv
 
 
 " Spell check
-setlocal spell
+"setlocal spell
 inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 
 " Plugin manager
@@ -120,6 +113,9 @@ filetype plugin indent on
 " Allow Ultisnips to work in Markdown Files (that Vimwiki controls)
 let g:vimwiki_table_mappings = 0
 
+" Refresh after window resizes
+set term=kitty
+
 
 " WolframAlpha
 nnoremap <Leader>z :exec '.!~/scripts/vim/vimwolf.py "'.getline(".").'"' <Esc>:redraw!<CR>
@@ -127,3 +123,7 @@ nnoremap <Leader>z :exec '.!~/scripts/vim/vimwolf.py "'.getline(".").'"' <Esc>:r
 " yash and python
 autocmd FileType python map <buffer> <F6> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
 autocmd FileType python imap <buffer> <F6> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+
+" Tab = 2 spaces
+set tabstop=2 softtabstop=2 shiftwidth=2
+set expandtab
