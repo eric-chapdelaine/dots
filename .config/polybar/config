@@ -1,0 +1,108 @@
+[bar/example]
+monitor = ${env:MONITOR:}
+width = 100%
+height = 25
+
+module-margin = 5
+
+font-0 = "Roboto:size=10:weight=bold;2"
+; background = #2e3440
+background = #0
+foreground = #c8c7d0
+modules-left = i3
+modules-center = date
+modules-right = network battery
+
+[module/network]
+type = internal/network
+format-connected = <ramp-signal>
+; interface = wlp0s20f3
+interface = wlan0
+ramp-signal-0 = 0
+ramp-signal-1 = 1
+ramp-signal-2 = 2
+ramp-signal-3 = 3
+ramp-signal-4 = 4
+ramp-signal-5 = 5
+
+[module/battery]
+type = internal/battery
+
+battery = BAT0
+adapter = AC 
+
+[module/memory]
+type = internal/memory
+interval = 2
+label = Memory: %gb_used%/%gb_free%
+
+[module/cpu]
+type = internal/cpu
+interval = 2
+label = CPU: %percentage%%
+
+[module/timer]
+type = custom/script
+exec = python3 -u ~/scripts/polybar/pomodoro/timer.py
+click-left = python3 ~/scripts/polybar/pomodoro/timer.py toggle
+click-right = python3 ~/scripts/polybar/pomodoro/timer.py next
+interval = 1
+
+
+[module/cal]
+type = custom/script
+exec = python3 -u ~/scripts/gcal/cal.py emchap4@gmail.com
+click-left = firefox 'https://calendar.google.com/calendar/b/1/r'
+tail = true
+content-foreground = #fff
+
+[module/classes]
+type = custom/script
+exec = python3 -u ~/scripts/gcal/cal.py kr3suerpvq6uj6fcfjrhq4pd5s@group.calendar.google.com
+click-left = firefox 'https://calendar.google.com/calendar/b/1/r'
+tail = true
+content-foreground = #fff
+
+
+[module/date]
+type = internal/date
+
+date = %A (%m-%d) %I:%M %p 
+content-foreground = #fff
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+index-sort = true
+wrapping-scroll = false
+
+; Only show workspaces on the same output as the bar
+pin-workspaces = true
+
+label-mode-padding = 1
+label-mode-foreground = #000
+label-mode-background = #ffb52a
+
+; focused = Active workspace on focused monitor
+label-focused = %index%
+label-focused-background = #555
+label-focused-underline= #ffb52a
+label-focused-padding = 2
+
+; unfocused = Inactive workspace on any monitor
+label-unfocused = %index%
+label-unfocused-padding = 2
+
+; visible = Active workspace on unfocused monitor
+label-visible = %index%
+label-visible-background = ${self.label-focused-background}
+label-visible-underline = ${self.label-focused-underline}
+label-visible-padding = ${self.label-focused-padding}
+
+; urgent = Workspace with urgency hint set
+label-urgent = %index%
+label-urgent-background = #bd2c40
+label-urgent-padding = 2
+
+; Separator in between workspaces
+; label-separator = |
