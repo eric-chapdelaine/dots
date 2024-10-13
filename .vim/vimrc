@@ -9,6 +9,8 @@ set shiftwidth=4
 set shiftround
 set expandtab
 
+set laststatus=2
+
 " Make j and k work through line wrap
 :nnoremap j gj
 :nnoremap k gk
