@@ -15,17 +15,36 @@ cdt() {
     cd $(fzf --tmux)
 }
 
+##################
+# Linux Specific #
+##################
+
+if [ "$system_type" = "Linux" ]; then
+    export EDITOR="/usr/bin/vim"
+    export VISUAL="/usr/bin/vim"
+
+    # cd into directory once navigated from lf
+    # (alias is short for ranger)
+    alias ra="cd \"\$(command lf -print-last-dir $@)\""
+
+    alias open="xdg-open"
+    alias s="maim -s ~/Pictures/$(date +%s).png"
+fi
 
 ################
 # Mac Specific #
 ################
-
 
 if [ "$system_type" = "Darwin" ]; then
     alias ra="ranger ."
 
     # Use update vim
     alias vim='/opt/homebrew/bin/vim'
+
+    # TODO: have different for thinkpad
+    source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    
+    alias ctags="/opt/homebrew/bin/ctags"
 
     ####################
     # Wayfair specific #
@@ -44,12 +63,6 @@ if [ "$system_type" = "Darwin" ]; then
     if [ -f '/Users/ec825m/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ec825m/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
     export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
-    ####################
-
-    # TODO: have different for thinkpad
-    source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-    
-    alias ctags="/opt/homebrew/bin/ctags"
 
     #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
     export SDKMAN_DIR="$HOME/.sdkman"
