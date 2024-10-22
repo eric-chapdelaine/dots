@@ -50,6 +50,12 @@ if [ "$system_type" = "Darwin" ]; then
     # Wayfair specific #
     ####################
 
+    token() {
+    curl --location --request GET 'localhost:5000/create/token?employeeId=1101825' \
+--data '' | jq -r '.response' | pbcopy
+    echo COPIED
+    }
+
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
