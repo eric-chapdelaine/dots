@@ -51,14 +51,28 @@ if [ "$system_type" = "Darwin" ]; then
     ####################
 
     token() {
-    curl --location --request GET 'localhost:5000/create/token?employeeId=1101825' \
---data '' | jq -r '.response' | pbcopy
-    echo COPIED
+      curl --location --request GET 'localhost:5000/create/token?employeeId=1101825' \
+--da  ta '' | jq -r '.response' | pbcopy
+      echo COPIED
     }
 
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+    # Lazy load nvm
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "$HOME/.nvm" || printf %s "$XDG_CONFIG_HOME/nvm")"
+
+    # Function to load nvm only when needed
+    load_nvm() {
+      # Load nvm
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    
+      # Load nvm bash_completion if available
+      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    }
+    
+    # Set up aliases and autoloading
+    nvm() {
+      load_nvm
+      nvm "$@"
+    }
 
     alias mamba="docker pull wayfair/mamba:latest && docker run -it --rm wayfair/mamba:latest"
 
