@@ -69,6 +69,7 @@ if [ "$system_type" = "Darwin" ]; then
     if [ -f '/Users/***REDACTED***/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/***REDACTED***/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
     export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
+    export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
     #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
     export SDKMAN_DIR="$HOME/.sdkman"
