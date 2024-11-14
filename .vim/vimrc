@@ -75,7 +75,7 @@ call plug#begin()
     Plug 'junegunn/fzf.vim'
 call plug#end()
 
-let g:ackprg = 'ag --nogroup --nocolor --column'
+let g:ackprg = 'ag -U --path-to-ignore ~/.ignore --nogroup --nocolor --column'
 
 " Auto update on file change
 
