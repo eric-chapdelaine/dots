@@ -15,6 +15,8 @@ cdt() {
     cd $(fzf --tmux)
 }
 
+alias ag='ag -U --path-to-ignore ~/.ignore'
+
 ##################
 # Linux Specific #
 ##################
@@ -52,7 +54,7 @@ if [ "$system_type" = "Darwin" ]; then
 
     token() {
       curl --location --request GET 'localhost:5000/create/token?employeeId=1101825' \
---da  ta '' | jq -r '.response' | pbcopy
+--data '' | jq -r '.response' | pbcopy
       echo COPIED
     }
 
