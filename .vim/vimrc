@@ -73,6 +73,7 @@ call plug#begin()
     Plug 'mileszs/ack.vim'
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
+    Plug 'github/copilot.vim'
 call plug#end()
 
 let g:ackprg = 'ag -U --path-to-ignore ~/.ignore --nogroup --nocolor --column'
