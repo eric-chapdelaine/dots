@@ -28,6 +28,8 @@ if [ "$system_type" = "Linux" ]; then
     export EDITOR="/usr/bin/vim"
     export VISUAL="/usr/bin/vim"
 
+    alias vim='nvim'
+
     # cd into directory once navigated from lf
     # (alias is short for ranger)
     alias ra="cd \"\$(command lf -print-last-dir $@)\""

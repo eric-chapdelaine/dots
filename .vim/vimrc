@@ -81,6 +81,7 @@ call plug#begin()
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
     Plug 'tpope/vim-fugitive'
+    Plug 'github/copilot.vim'
 call plug#end()
 
 let g:ackprg = 'ag -U --path-to-ignore ~/.ignore --nogroup --nocolor --column'
