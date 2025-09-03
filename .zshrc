@@ -27,12 +27,16 @@ if [ "$system_type" = "Linux" ]; then
 
     alias vim='nvim'
 
+    alias goose='~/.local/bin/goose'
+
     # cd into directory once navigated from lf
     # (alias is short for ranger)
     alias ra="cd \"\$(command lf -print-last-dir $@)\""
 
     alias open="xdg-open"
     alias s="maim -s ~/Pictures/$(date +%s).png"
+
+    export OLLAMA_API_BASE=http://127.0.0.1:11434
 fi
 
 ################
