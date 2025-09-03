@@ -1,5 +1,6 @@
 " General
 set relativenumber
+set number
 syntax on
 
 " Tab to spaces
@@ -35,6 +36,12 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
 
 let g:lsp_experimental_workspace_folders = 1
+
+let g:lsp_settings = {
+    \ 'java': {
+    \  'root_uri':{server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'pom.xml'))},
+    \  }
+    \ }
 
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
@@ -73,10 +80,14 @@ call plug#begin()
     Plug 'mileszs/ack.vim'
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
+    Plug 'tpope/vim-fugitive'
     Plug 'github/copilot.vim'
 call plug#end()
 
 let g:ackprg = 'ag -U --path-to-ignore ~/.ignore --nogroup --nocolor --column'
+ 
+let g:copilot_node_command =
+        \ "~/.nvm/versions/node/v18.20.4/bin/node"
 
 " Auto update on file change
 
