@@ -61,3 +61,7 @@ shift + alt - 7 : yabai -m window --space 7;
 ctrl + alt - q : yabai --stop-service
 ctrl + alt - s : yabai --start-service
 ctrl + alt - r : yabai --restart-service
+
+# make opening apps easier
+ctrl - return: open -na /Applications/iTerm.app
+shift + ctrl - return: open -na /Applications/Google\ Chrome.app
