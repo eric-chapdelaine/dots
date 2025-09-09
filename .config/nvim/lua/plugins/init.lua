@@ -45,6 +45,7 @@ return {
       vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = 'Telescope buffers' })
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Telescope help tags' })
       vim.keymap.set('n', '<leader>st', builtin.treesitter, { desc = 'Telescope help tags' })
+      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = 'Telescope help tags' })
       vim.keymap.set('n', '<leader>ps', function()
         builtin.grep_string({ search = vim.fn.input("Grep > ") });
       end)
@@ -96,10 +97,10 @@ return {
 
           map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
           map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
-          map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-          map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-          map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-          map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
           map('gO', require('telescope.builtin').lsp_document_symbols, 'Open Document Symbols')
           map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
           map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
@@ -186,7 +187,9 @@ return {
       local capabilities = require('blink.cmp').get_lsp_capabilities()
 
       local servers = {
-	      vtsls = {},
+				vtsls = {},
+				phpactor = {},
+				java_language_server = {},
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
