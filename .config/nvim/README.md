@@ -10,12 +10,15 @@ This is a modular Neovim configuration using lazy.nvim as the plugin manager.
 ├── lua/
 │   ├── emchap4/               # Core configuration
 │   │   ├── init.lua           # Loads all core modules
+│   │   ├── env.lua            # Environment setup (adds node to PATH)
 │   │   ├── options.lua        # Vim options (line numbers, clipboard, etc.)
 │   │   ├── keymaps.lua        # General keymaps
+│   │   ├── autocmds.lua       # Autocommands
 │   │   └── remap.lua          # (Deprecated - kept for backward compatibility)
 │   └── plugins/               # Plugin configurations
 │       ├── completion.lua     # Blink.cmp autocompletion
 │       ├── file-explorer.lua  # Neo-tree file explorer
+│       ├── formatting.lua     # Code formatting (conform.nvim)
 │       ├── git.lua            # Git integrations (gitsigns, fugitive)
 │       ├── lsp.lua            # LSP configuration
 │       ├── telescope.lua      # Fuzzy finder
@@ -31,6 +34,7 @@ This is a modular Neovim configuration using lazy.nvim as the plugin manager.
 - **Fuzzy Finding**: Telescope for file/text searching
 - **Autocompletion**: Blink.cmp with LSP integration
 - **File Explorer**: Neo-tree for file navigation
+- **Auto-formatting**: Conform.nvim with project-aware prettier and PHP formatting
 
 ## Key Bindings
 
@@ -64,6 +68,11 @@ This is a modular Neovim configuration using lazy.nvim as the plugin manager.
 - `grt` - Go to type definition
 - `<leader>th` - Toggle inlay hints
 
+### Formatting
+- `<leader>f` - Format current buffer (respects project prettier config)
+- `<leader>tf` - Toggle format on save (globally)
+- Auto-format on save enabled by default
+
 ## Adding New Plugins
 
 1. Create a new file in `lua/plugins/` (e.g., `my-plugin.lua`)
@@ -94,3 +103,54 @@ return {
 - `:Lazy update` - Update all plugins
 - `:Lazy sync` - Install missing and update plugins
 - `:Mason` - Manage LSP servers, formatters, and linters
+
+## Formatting Setup
+
+The configuration uses `conform.nvim` for code formatting with the following features:
+
+### Automatic Project Detection
+- **TypeScript/JavaScript**: Automatically finds and uses `.prettierrc`, `prettier.config.js` from your project root
+- **PHP**: Uses `php-cs-fixer` with PSR-12 standard
+- **Lua**: Uses `stylua`
+
+### Format on Save
+Format on save is enabled by default. The formatter will:
+1. Look for project-specific prettier config in your repo (DSE, Frontend, etc.)
+2. Use that config for formatting
+3. Fall back to LSP formatting if no formatter is configured
+
+### Manual Formatting
+Press `<leader>f` in normal or visual mode to format the current buffer or selection.
+
+### Required Tools
+Formatters are already installed:
+- ✅ **Prettier**: Installed globally via `npm install -g prettier`
+- ✅ **Node.js PATH**: Automatically configured via `lua/emchap4/env.lua`
+- **PHP formatter**: Uses project-local `php-cs-fixer` or falls back to LSP
+- **Lua formatter**: Auto-installed via Mason (stylua)
+
+If you need to reinstall prettier:
+```bash
+# Use the node version for your project
+nvm use 18  # For frontend
+npm install -g prettier
+
+# Or for DSE
+nvm use 14
+npm install -g prettier
+```
+
+### Toggling Format on Save
+To toggle format on save globally, press `<leader>tf`.
+
+Alternatively, you can disable it via commands:
+```vim
+" Disable globally
+:lua vim.g.disable_autoformat = true
+
+" Disable for current buffer only
+:lua vim.b.disable_autoformat = true
+
+" Re-enable
+:lua vim.g.disable_autoformat = false
+```
