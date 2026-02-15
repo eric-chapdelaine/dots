@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# This script runs every time autorandr switches profiles
+# case "$AUTORANDR_CURRENT_PROFILE" in
+#     workstation)
+#         # Put things here that should happen when the monitor is PLUGGED IN
+#         notify-send "Display" "Workstation mode activated"
+#         bash ~/.config/polybar/launch.sh
+#         # Run your "Script 1" here
+#         ;;
+#     mobile)
+#         # Put things here that should happen when the monitor is UNPLUGGED
+#         notify-send "Display" "Mobile mode activated"
+#         bash ~/.config/polybar/launch.sh
+#         # Run your "Script 2" here
+#         ;;
+# esac
+
+# Log activity to a temp file for debugging
+echo "Autorandr switched to $AUTORANDR_CURRENT_PROFILE at $(date)" >> /tmp/autorandr.log
+
+# Give the display server 1 second to breathe
+sleep 1
+
+# Force the polybar launch
+/home/emchap4/.config/polybar/launch.sh >> /tmp/autorandr.log 2>&1
