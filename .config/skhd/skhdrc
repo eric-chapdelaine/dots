@@ -63,5 +63,5 @@ ctrl + alt - s : yabai --start-service
 ctrl + alt - r : yabai --restart-service
 
 # make opening apps easier
-ctrl - return: open -na /Applications/iTerm.app
+ctrl - return: open -na /Applications/Ghostty.app
 shift + ctrl - return: open -na /Applications/Google\ Chrome.app

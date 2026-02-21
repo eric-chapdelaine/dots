@@ -30,8 +30,8 @@ return {
         css = { 'prettierd', 'prettier', stop_after_first = true },
         scss = { 'prettierd', 'prettier', stop_after_first = true },
         
-        -- PHP - use php-cs-fixer if available, otherwise ***REDACTED***
-        php = { 'php_cs_fixer' },
+        -- PHP - use ***REDACTED*** (***REDACTED***) for WFE, fall back to php-cs-fixer
+        php = { '***REDACTED***', 'php_cs_fixer', stop_after_first = true },
         
         -- Lua
         lua = { 'stylua' },
@@ -62,6 +62,30 @@ return {
         prettier = {},
         -- Prettierd is faster but needs to be installed separately
         prettierd = {},
+        
+        -- ***REDACTED*** (***REDACTED***) for WFE
+        ***REDACTED*** = {
+          command = function()
+            -- Try to find vendor/bin/***REDACTED*** in the project root
+            local root = vim.fs.dirname(vim.fs.find({ 
+              '***REDACTED***',
+              'composer.json',
+            }, { upward = true })[1])
+            
+            if root then
+              local ***REDACTED*** = root .. '/vendor/bin/***REDACTED***'
+              if vim.fn.executable(***REDACTED***) == 1 then
+                return ***REDACTED***
+              end
+            end
+            
+            -- Fall back to global ***REDACTED*** if available
+            return '***REDACTED***'
+          end,
+          args = { 'check', '--fix', '$FILENAME' },
+          stdin = false,
+        },
+        
         php_cs_fixer = {
           command = 'php-cs-fixer',
           args = {
