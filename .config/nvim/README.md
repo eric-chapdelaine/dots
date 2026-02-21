@@ -34,7 +34,7 @@ This is a modular Neovim configuration using lazy.nvim as the plugin manager.
 - **Fuzzy Finding**: Telescope for file/text searching
 - **Autocompletion**: Blink.cmp with LSP integration
 - **File Explorer**: Neo-tree for file navigation
-- **Auto-formatting**: Conform.nvim with project-aware prettier and PHP formatting
+- **Auto-formatting**: Conform.nvim with project-aware prettier for TypeScript/JavaScript and ECS for PHP
 
 ## Key Bindings
 
@@ -109,8 +109,8 @@ return {
 The configuration uses `conform.nvim` for code formatting with the following features:
 
 ### Automatic Project Detection
-- **TypeScript/JavaScript**: Automatically finds and uses `.prettierrc`, `prettier.config.js` from your project root
-- **PHP**: Uses `php-cs-fixer` with PSR-12 standard
+- **TypeScript/JavaScript**: Automatically finds and uses `.prettierrc`, `prettier.config.js` from your project root (DSE, Frontend)
+- **PHP**: Uses ECS (Easy Coding Standard) from WFE `vendor/bin/ecs`, falls back to `php-cs-fixer`
 - **Lua**: Uses `stylua`
 
 ### Format on Save

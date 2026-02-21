@@ -55,6 +55,8 @@ if [ "$system_type" = "Darwin" ]; then
     export EDITOR='nvim'
 
     alias goose='~/goose'
+    
+    export PATH="/Users/ec825m/.local/bin:$PATH"
 
     # TODO: have different for thinkpad
     source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -102,6 +104,10 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "$HOME/.nvm" || prin
       nvm "$@"
     }
 
+    # Add node v18 directly to PATH (bypasses nvm for faster shell startup)
+    # This makes node v18 available immediately without loading nvm
+    export PATH="$HOME/.nvm/versions/node/v18.20.4/bin:$PATH"
+
     alias mamba="docker pull wayfair/mamba:latest && docker run -it --rm wayfair/mamba:latest"
 
     # The next line updates PATH for the Google Cloud SDK.
@@ -122,6 +128,16 @@ fi
 export RNDR_VM="webphp-xxxxxxx-dsm1.c.wf-gcp-us-sds-prod.internal"
 export RNDR_VM="webphp-xxxxxxx-dsm1.c.wf-gcp-us-sds-prod.internal"
 
-export GOOGLE_CLOUD_PROJECT=wf-gcp-us-workflow-plat-prod
+export GOOGLE_CLOUD_PROJECT=wf-gcp-us-scrt-ai-pilot-sbx
 export GOOGLE_CLOUD_LOCATION=us-east5
 export GOOGLE_GENAI_USE_VERTEXAI=true
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/ec825m/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ec825m/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/ec825m/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ec825m/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+# opencode
+export PATH=/Users/ec825m/.opencode/bin:$PATH
+

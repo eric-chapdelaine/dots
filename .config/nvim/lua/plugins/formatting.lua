@@ -30,8 +30,8 @@ return {
         css = { 'prettierd', 'prettier', stop_after_first = true },
         scss = { 'prettierd', 'prettier', stop_after_first = true },
         
-        -- PHP - use php-cs-fixer if available, otherwise ecs
-        php = { 'php_cs_fixer' },
+        -- PHP - use ECS (Easy Coding Standard) for WFE, fall back to php-cs-fixer
+        php = { 'ecs', 'php_cs_fixer', stop_after_first = true },
         
         -- Lua
         lua = { 'stylua' },
@@ -62,6 +62,30 @@ return {
         prettier = {},
         -- Prettierd is faster but needs to be installed separately
         prettierd = {},
+        
+        -- ECS (Easy Coding Standard) for WFE
+        ecs = {
+          command = function()
+            -- Try to find vendor/bin/ecs in the project root
+            local root = vim.fs.dirname(vim.fs.find({ 
+              'ecs.php',
+              'composer.json',
+            }, { upward = true })[1])
+            
+            if root then
+              local ecs_path = root .. '/vendor/bin/ecs'
+              if vim.fn.executable(ecs_path) == 1 then
+                return ecs_path
+              end
+            end
+            
+            -- Fall back to global ecs if available
+            return 'ecs'
+          end,
+          args = { 'check', '--fix', '$FILENAME' },
+          stdin = false,
+        },
+        
         php_cs_fixer = {
           command = 'php-cs-fixer',
           args = {
