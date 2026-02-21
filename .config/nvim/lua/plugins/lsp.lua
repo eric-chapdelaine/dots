@@ -160,6 +160,8 @@ return {
       for server_name, server_config in pairs(servers) do
         server_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities or {})
         vim.lsp.config[server_name] = server_config
+        -- Enable the server to auto-start
+        vim.lsp.enable(server_name)
       end
 
       -- Ensure the servers and tools above are installed
