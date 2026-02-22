@@ -17,4 +17,10 @@ return {
   {
     "tpope/vim-fugitive"
   },
+  
+  -- GitHub integration for fugitive (enables :GBrowse)
+  {
+    "tpope/vim-rhubarb",
+    dependencies = { "tpope/vim-fugitive" },
+  },
 }
