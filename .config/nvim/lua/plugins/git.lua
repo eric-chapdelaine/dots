@@ -30,10 +30,16 @@ return {
     config = function()
       require('blame').setup {
         date_format = "%Y-%m-%d",
+        max_summary_width = 40,  -- Limit commit message width
         format_fn = function(line_porcelain, config, idx)
           local summary = line_porcelain.summary
           local date = os.date(config.date_format, line_porcelain.author_time)
           local hash = line_porcelain.hash:sub(1, 8)
+          
+          -- Truncate summary if it exceeds max width
+          if #summary > config.max_summary_width then
+            summary = summary:sub(1, config.max_summary_width - 3) .. "..."
+          end
           
           return {
             idx = idx,
