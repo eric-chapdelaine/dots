@@ -8,8 +8,9 @@ This document covers all custom plugins added to enhance code navigation, contex
 3. [glance.nvim (LSP Peek)](#3-glancenvim-lsp-navigation-peek-window)
 4. [toggleterm.nvim (Terminal Management)](#4-toggletermnvim-terminal-management)
 5. [opencode.nvim (AI Integration)](#5-opencodenvim-opencode-integration)
-6. [vim-rhubarb (GitHub Integration)](#6-vim-rhubarb-github-integration)
-7. [Workflow Examples](#workflow-examples)
+6. [blame.nvim (Git Blame with Commit Messages)](#6-blamenvim-git-blame-with-commit-messages)
+7. [vim-rhubarb (GitHub Integration)](#7-vim-rhubarb-github-integration)
+8. [Workflow Examples](#workflow-examples)
 
 ---
 
@@ -297,7 +298,134 @@ When you press `<leader>ox`, you can select from:
 
 ---
 
-## 6. vim-rhubarb (GitHub Integration)
+## 6. blame.nvim (Git Blame with Commit Messages)
+
+### What it does:
+- Shows git blame in a fugitive-style vertical split
+- Displays **commit messages** instead of just author names
+- Format: `hash • commit message • date`
+- Built-in GitHub/GitLab/Bitbucket integration
+- Navigate through file history at any point (blame stack)
+
+### Keybindings:
+- `<leader>gb` - Toggle blame window
+
+### Blame Window Mappings:
+When the blame window is open:
+- `<CR>` - Show full commit details
+- `o` - Open commit on GitHub/GitLab/Bitbucket in browser
+- `i` - Show commit info popup
+- `<Tab>` - Push to blame stack (view file before this commit)
+- `<BS>` - Pop from blame stack (go back)
+- `y` - Copy commit hash to clipboard
+- `q` or `<Esc>` - Close blame window
+
+### Usage:
+
+**Basic blame workflow:**
+```
+1. Open any file in a git repository
+2. Press <leader>gb
+3. Blame window opens showing:
+   48e80193 • Add vim-rhubarb integration • 2026-02-24
+   a3347a5 • Configure nvim plugins • 2026-02-22
+4. Navigate through commits as needed
+```
+
+**View commit details:**
+```
+1. Open blame with <leader>gb
+2. Move cursor to a commit line
+3. Press <CR> to see full commit
+4. Or press i for a quick popup
+```
+
+**Open commit on GitHub:**
+```
+1. Open blame with <leader>gb
+2. Position cursor on any commit
+3. Press o
+4. Commit opens in your browser on GitHub
+```
+
+**Navigate file history (blame stack):**
+```
+1. Open blame with <leader>gb
+2. Find an interesting commit
+3. Press <Tab> to see file BEFORE that commit
+4. Press <Tab> again to go further back
+5. Press <BS> to return to more recent state
+```
+
+### Display Format:
+
+The blame window shows:
+```
+48e80193 • organize neovim files • 2026-02-06
+4023fcb • Add vim-rhubarb for GitHub integration • 2026-02-24
+a3347a5 • Add Neovim plugins: folding, context, glance • 2026-02-22
+```
+
+**Format breakdown:**
+- `48e80193` - First 8 chars of commit hash (highlighted)
+- `•` - Separator
+- `organize neovim files` - **Commit message** (this is what you wanted!)
+- `•` - Separator  
+- `2026-02-06` - Date in YYYY-MM-DD format
+
+### Workflow Examples:
+
+**Example 1: Understanding Why Code Changed**
+```
+1. See a confusing line of code
+2. Press <leader>gb
+3. Read commit message for that line
+4. Press <CR> to see full commit context
+5. Press o to view PR on GitHub if needed
+```
+
+**Example 2: Finding When Bug Was Introduced**
+```
+1. Find buggy line
+2. Press <leader>gb
+3. See commit: "Add feature X • 2025-12-15"
+4. Press <Tab> to see file before that commit
+5. Keep pressing <Tab> to find when bug appeared
+6. Press <BS> to return to current state
+```
+
+**Example 3: Sharing Commit Context**
+```
+1. Teammate asks about a line
+2. Press <leader>gb
+3. Position on relevant commit
+4. Press y to copy commit hash
+5. Or press o to get GitHub URL to share
+```
+
+### Tips:
+- Blame window is scroll-bound to your code - they scroll together
+- Same commits are highlighted in the same color
+- Works with GitHub, GitLab, and Bitbucket
+- Commit messages make it easy to understand change context
+- Blame stack is great for archaeological code investigation
+
+### Comparison with Fugitive's :Git blame:
+
+| Feature | fugitive `:Git blame` | blame.nvim |
+|---------|----------------------|------------|
+| Shows commit hash | ✅ Yes | ✅ Yes |
+| Shows author | ✅ Yes | ❌ No |
+| Shows commit message | ❌ No | ✅ Yes |
+| Shows date | ✅ Yes | ✅ Yes |
+| Customizable format | ❌ No | ✅ Yes |
+| Blame stack (history) | ❌ No | ✅ Yes |
+| Open on GitHub | ⚠️ Via rhubarb | ✅ Built-in |
+| Virtual text mode | ❌ No | ✅ Yes |
+
+---
+
+## 7. vim-rhubarb (GitHub Integration)
 
 ### What it does:
 - Extends vim-fugitive with GitHub-specific features
@@ -580,6 +708,17 @@ To verify everything is working:
 | `<leader>or` | Review code |
 | `<leader>od` | Document code |
 
+### Git Blame
+| Key | Action |
+|-----|--------|
+| `<leader>gb` | Toggle blame |
+| `<CR>` | Show commit (in blame) |
+| `o` | Open on GitHub (in blame) |
+| `i` | Commit info popup |
+| `<Tab>` | Blame stack push |
+| `<BS>` | Blame stack pop |
+| `y` | Copy commit hash |
+
 ### GitHub Integration
 | Command | Action |
 |---------|--------|
@@ -598,15 +737,16 @@ This configuration adds the following capabilities to Neovim:
 3. **LSP Peek Windows** - View definitions and references without losing your place
 4. **Terminal Management** - Run multiple persistent terminals alongside your code
 5. **AI Integration** - Get help from OpenCode directly in your editor
-6. **GitHub Integration** - Open files on GitHub and autocomplete issues in commits
-7. **Auto-starting LSP** - Language servers automatically start when opening files
+6. **Git Blame with Commit Messages** - See why code changed, not just who changed it
+7. **GitHub Integration** - Open files and commits on GitHub, autocomplete issues in commits
+8. **Auto-starting LSP** - Language servers automatically start when opening files
 
 All features work together to create a powerful code navigation and development environment.
 
 ### Plugin Files
 
 The following plugin files are configured:
-- `lua/plugins/git.lua` - Git-related plugins (fugitive, rhubarb, gitsigns)
+- `lua/plugins/git.lua` - Git-related plugins (fugitive, rhubarb, gitsigns, blame.nvim)
 - `lua/plugins/folding.lua` - nvim-ufo code folding
 - `lua/plugins/context.lua` - nvim-treesitter-context
 - `lua/plugins/glance.lua` - LSP peek windows
