@@ -141,3 +141,6 @@ if [ -f '/Users/ec825m/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . 
 # opencode
 export PATH=/Users/ec825m/.opencode/bin:$PATH
 
+
+# opencode
+export PATH=/home/emchap4/.opencode/bin:$PATH
