@@ -15,6 +15,15 @@ return {
       vim.keymap.set('n', '<leader>ps', function()
         builtin.grep_string({ search = vim.fn.input("Grep > ") })
       end, { desc = 'Telescope grep prompt' })
+      vim.keymap.set('n', '<leader>pf', function()
+        local regex = vim.fn.input("Regex > ")
+        if regex == "" then return end
+        local glob = vim.fn.input("Glob > ")
+        builtin.live_grep({
+          default_text = regex,
+          glob_pattern = glob ~= "" and glob or nil,
+        })
+      end, { desc = 'Telescope grep with regex and glob filter' })
     end,
   },
 }

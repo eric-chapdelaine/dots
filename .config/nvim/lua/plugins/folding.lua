@@ -26,6 +26,10 @@ return {
 
       require('ufo').setup({
         provider_selector = function(bufnr, filetype, buftype)
+          -- Disable ufo for filetypes that have problematic auto-folding
+          if filetype == 'markdown' or filetype == 'json' then
+            return ''
+          end
           -- Use treesitter as primary provider, fallback to indent
           return { 'treesitter', 'indent' }
         end,
