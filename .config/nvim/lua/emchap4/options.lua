@@ -23,10 +23,7 @@ vim.opt.tabstop = 4
 
 vim.cmd('filetype indent on')
 
--- Folding (enhanced by nvim-ufo plugin)
 vim.opt.fillchars = {
-  fold = " ",
-  foldsep = " ",
   diff = "╱",
   eob = " ",
 }
