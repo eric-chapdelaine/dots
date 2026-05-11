@@ -26,7 +26,37 @@ return {
 					map("gra", vim.lsp.buf.code_action, "[G]oto Code [A]ction", { "n", "x" })
 					map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
 					map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-					map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+				map("gd", function()
+					-- Telescope's single-result jump calls jump_to_location before the
+					-- buffer finishes loading, causing "Cursor position outside buffer".
+					-- Using vim.lsp.buf.definition with a custom handler that defers the
+					-- jump avoids the race condition.
+					local client = vim.lsp.get_clients({ bufnr = 0 })[1]
+					local encoding = client and client.offset_encoding or "utf-16"
+					local params = vim.lsp.util.make_position_params(0, encoding)
+					vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result, ctx)
+						if err or not result or vim.tbl_isempty(result) then
+							return
+						end
+						local resp_client = vim.lsp.get_client_by_id(ctx.client_id)
+						local resp_encoding = resp_client and resp_client.offset_encoding or encoding
+						local locations = vim.islist(result) and result or { result }
+						if #locations == 1 then
+							-- Single result: load the buffer then defer the jump so the
+							-- buffer lines are available before show_document sets the cursor.
+							local loc = locations[1]
+							local uri = loc.uri or loc.targetUri
+							local bufnr = vim.uri_to_bufnr(uri)
+							vim.fn.bufload(bufnr)
+							vim.schedule(function()
+								vim.lsp.util.show_document(loc, resp_encoding, { reuse_win = true, focus = true })
+							end)
+						else
+							-- Multiple results: show Telescope picker
+							require("telescope.builtin").lsp_definitions({ reuse_win = true })
+						end
+					end)
+				end, "[G]oto [D]efinition")
 					map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 					map("gO", require("telescope.builtin").lsp_document_symbols, "Open Document Symbols")
 					map("gW", require("telescope.builtin").lsp_dynamic_workspace_symbols, "Open Workspace Symbols")

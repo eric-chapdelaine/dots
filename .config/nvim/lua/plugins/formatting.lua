@@ -45,7 +45,7 @@ return {
         end
         
         -- Disable format on save for certain filetypes
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = { c = true, cpp = true, yaml = true }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return
         end
