@@ -144,3 +144,6 @@ export PATH=/Users/ec825m/.opencode/bin:$PATH
 
 # opencode
 export PATH=/home/emchap4/.opencode/bin:$PATH
+
+# Workflow Agent Orchestrator
+export PATH="/Users/ec825m/ai_tools/orchestrator:$PATH"

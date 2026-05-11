@@ -1,0 +1,91 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": {
+      "~/**": "allow",
+      "/tmp/**": "allow"
+    },
+    "read": {
+      "*": "allow",
+      "~/**": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow"
+    },
+    "edit": {
+      "*": "allow",
+      "~/**": "allow"
+    }
+  },
+  "mcp": {
+    "datadog": {
+      "type": "local",
+      "command": ["/Users/ec825m/.local/bin/datadog_mcp_cli"],
+      "enabled": true
+    },
+    "playwright": {
+      "type": "local",
+      "command": [
+        "/Users/ec825m/.nvm/versions/node/v18.20.4/bin/npx",
+        "@playwright/mcp@latest"
+      ],
+      "enabled": true,
+      "environment": {
+        "PATH": "/Users/ec825m/.nvm/versions/node/v18.20.4/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    },
+    "jira": {
+      "type": "local",
+      "enabled": false,
+      "command": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "JIRA_URL",
+        "-e",
+        "JIRA_PERSONAL_TOKEN",
+        "-e",
+        "JIRA_SSL_VERIFY",
+        "ghcr.io/sooperset/mcp-atlassian:latest"
+      ],
+      "environment": {
+        "JIRA_URL": "https://projecthub.service.csnzoo.com",
+        "JIRA_PERSONAL_TOKEN": "<redacted>",
+        "JIRA_SSL_VERIFY": "false"
+      }
+    },
+    "bigquery": {
+      "type": "local",
+      "enabled": true,
+      "command": [
+        "/Users/ec825m/.opencode/bin/toolbox",
+        "--prebuilt",
+        "bigquery",
+        "--stdio"
+      ],
+      "environment": {
+        "BIGQUERY_PROJECT": "wf-gcp-us-ae-scribe-v2-prod"
+      }
+    },
+    "github": {
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "enabled": false,
+      "headers": {
+        "Authorization": "Bearer <redacted>"
+      }
+    },
+    "glean_default": {
+      "type": "remote",
+      "url": "https://wayfair-be.glean.com/mcp/default",
+      "enabled": true
+    },
+    "figma": {
+      "type": "remote",
+      "url": "http://127.0.0.1:3845/mcp",
+      "enabled": true
+    }
+  }
+}
