@@ -22,7 +22,7 @@ return {
         enable = true,
         additional_vim_regex_highlighting = { '***REDACTED***' },
       },
-      indent = { enable = true, disable = { '***REDACTED***' } },
+      indent = { enable = true, disable = { '***REDACTED***', 'typescript', 'javascript', 'tsx', 'jsx' } },
     },
   },
 }
