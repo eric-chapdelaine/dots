@@ -58,6 +58,86 @@ When investigating a bug or production issue, follow this sequence:
 
 ---
 
+## Nile Health pull requests (Nile-Core & NileWebApps)
+
+Patterns observed from merged PRs and reviewer feedback in `Nile-Health/nile-core` and `Nile-Health/NileWebApps`.
+
+### Typical size (feature work)
+
+Exclude automated **Deploy to Production** PRs and large merge/sync PRs when judging size.
+
+| Metric | Nile-Core | NileWebApps |
+|--------|-----------|-------------|
+| Median line churn (add + del) | ~130 | ~130 |
+| Median files changed | ~3 | ~4 |
+| Sweet spot | Under ~500 lines, few files | Same |
+| Common large PRs | E2E suites, catalog features, multi-screen UI | Same |
+
+Prefer several small PRs over one monolithic change. Automation often labels PRs **Small** vs **Large/Monolithic**; large cohesive features happen but need stronger testing notes and reviewer time.
+
+### Nile-Core description (`pull_request_template.md`)
+
+Use the repo template sections:
+
+1. **Description** — what changed and why (not a file list).
+2. **Migration Risk Assessment** — exactly one of:
+   - **Green** — fully reversible (`create_table`, `rename_column`, `add_index`, etc.).
+   - **Yellow** — reversible but heavy or long-running (`add_column` on large tables, type changes, indexes on big tables). Deploy when clinic traffic is low; include rollback/mitigation.
+   - **Red** — destructive or irreversible (`drop_table`, `drop_column`, data backfills). Needs VP Engineering or Chief Architect approval.
+3. **Testing** — concrete commands and scenarios (e.g. `rspec path/to/spec.rb`, manual steps).
+4. **Monitoring** — how success will be observed (Datadog, logs, metrics, feature flags).
+
+For behavior changes, **Before / After** examples (API payloads, SMS text, UI copy) help reviewers and are used in production PRs.
+
+Agent-generated bodies often use `<!-- CURSOR_AGENT_PR_BODY_BEGIN -->` with **Summary**, **Behavior**, and **Changes** — that structure is acceptable when it maps to the template above.
+
+### NileWebApps description
+
+No checked-in PR template; follow team conventions:
+
+- **Summary** or **Description** at the top.
+- **Changes** — bullet list by app or area (`apps/customer-frontend/...`).
+- **Linear ticket** — link `https://linear.app/general-medicine/issue/GM-XXXX/...` and put `GM-XXXX` in the title when applicable.
+- **Backend PR** — link the matching Nile-Core PR when the feature spans repos.
+- **Testing** — manual steps, Vitest/Playwright commands, staging URLs; for hot paths, note testing **without** mocked prices/auth/data (reviewers ask for this explicitly).
+- Optional **CURSOR_SUMMARY** risk block (Low/Medium/High) — align the PR scope with the stated risk.
+
+### What reviewers comment on
+
+Address these proactively before requesting review:
+
+| Theme | What to do |
+|-------|------------|
+| **Scope & simplicity** | Smallest change that solves the problem; avoid drive-by refactors. |
+| **Tests** | RSpec (Core) or Vitest/Playwright (WebApps); scoped examples, not suite-wide `Model.count`. |
+| **Hot paths** | Customer checkout, visit flow, booking options — describe real staging/manual verification, not only Cursor stubs. |
+| **Auth & redirects** | Middleware and login return paths are high-risk; explain early-return vs `redirect` behavior. |
+| **Privacy** | No patient PHI in logs, Segment, or third parties without a BAA; Datadog may be called out as in-scope when justified. |
+| **DB & migrations** | Correct migration tier, indexes for new queries, two-phase deprecate-before-drop; yellow/red timing. |
+| **Logging** | Structured `logger` / SemanticLogger — no interpolated exception messages with PHI. |
+| **API & mocks** | Response shape should match product contracts (Figma/API); delete dead mocks and unused exports. |
+| **External APIs** | Athena/Vital/Stripe timeouts, rate limits, cost per call in non-prod. |
+| **Nits** | Import order, move helpers to top of file, reuse existing formatters (`formatCentsToDollars`, etc.) — fix nits without debate unless architectural. |
+| **Product judgment** | UX bounds (e.g. "50+"), default selections — flag for standup when unclear. |
+| **Cross-repo** | Link sibling PR; keep frontend and backend merge order clear in the description. |
+
+Review summaries are often short: **LGTM**, **✅**, or a few targeted questions. Thread replies should resolve or explain (e.g. why a dependency stays).
+
+Automated review (Bugbot, security/reviewability bots) is common — triage findings; fix real issues; don't silence valid medium+ security or duplicate-SMS/redirect bugs.
+
+### PRs to avoid editing manually
+
+**Deploy to Production** PRs are automated from `develop` → production: do not hand-merge; they auto-merge after staging tests. Do not use deploy PRs as the model for feature PR size or description style.
+
+### General preferences
+
+- Titles: imperative, specific (`Add pharmacy hours to retail SMS`, `[GM-5350] Visitron E2E tests`).
+- One logical change per PR; backend and frontend split when reviewable separately.
+- CI green before review; mention spec paths in the description.
+- Credentials / `config/credentials.yml.enc` conflicts: rebase carefully; prefer isolating secrets changes in their own commit when possible.
+
+---
+
 ## Skills
 
 Skills provide specialized workflows for specific tasks. When a task matches one of these, look for a matching skill in the project (`.cursor/skills/`) or invoke the workflow directly:
