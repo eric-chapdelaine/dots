@@ -7,6 +7,11 @@ alwaysApply: true
 
 General instructions for AI coding agents working in personal and professional projects.
 
+**Cursor + Neovim:** The user edits in Neovim and plans in Cursor IDE. For
+"this function", "here", open/show/go-to file, or cursor-context questions,
+follow `~/.cursor/rules/nvim-mcp.mdc` — use nvim-mcp against the Neovim
+instance whose `cwd` matches the current workspace repo.
+
 ---
 
 ## Development Philosophy

@@ -1,12 +1,75 @@
 ---
-description: Required workflow for AI agents controlling Neovim through nvim-mcp tools — specifies how to inspect editor state, edit buffers, and navigate windows. Apply whenever the user is editing in Neovim or asks the agent to interact with files via nvim-mcp.
+description: Integrated Cursor + Neovim workflow — default to the user's Neovim session (same repo as workspace) for "here/this function" questions, opening files, and edits. Use nvim-mcp buffer tools, not disk, when Neovim is in play.
 alwaysApply: true
 ---
 
-# Neovim via nvim-mcp
+# Neovim via nvim-mcp (primary editor)
 
-The user edits code in Neovim. You control it through nvim-mcp tools.
-You already know Vim — use that knowledge.
+The user splits work between **Cursor IDE** (planning, browser, large agent
+tasks) and **Neovim** (navigation, git, reading code, small edits). Treat
+Neovim as the source of truth for **what they are looking at right now**.
+
+You control Neovim through nvim-mcp tools. You already know Vim — use that
+knowledge.
+
+## When to use Neovim first (default)
+
+Assume Neovim context when the user says anything like:
+
+- "what does **this** function do", "what am I on", "here", "this line",
+  "this file", "under my cursor", "what I'm looking at"
+- "open …", "show me …", "go to …", "jump to …", "view …" (a file or symbol)
+- "explain this", "refactor this", "fix this" without naming a path they are
+  not already editing in the IDE chat
+
+**Do not** answer "what is this function" from disk or workspace search alone.
+**Do** `connect` → `get_state_brief` → read context around the active window
+(`active_window.context`, cursor line, optional `read_buf_range`).
+
+Use the **Cursor workspace root** (e.g. `Nile-Core`, `NileWebApps`) as the
+repo identity for matching instances and for relative paths in `send_command`.
+
+## Integrated workflow
+
+| Task | Where |
+|------|--------|
+| Plan, browser, PRs, multi-repo MCP | Cursor IDE |
+| Navigate, git blame, small Q&A, edits at cursor | Neovim (nvim-mcp) |
+| "Open / show / go to" a file | **Neovim** (`send_command` `e <path>`) |
+| Implement while user watches | Neovim buffers (`find_and_replace_buf`, etc.) |
+
+Only use the **Read** tool on disk when: Neovim is not running, `connect`
+fails, the file is not in `buffers` and the user asked for something outside
+the project tree, or they explicitly say "read from disk" / "don't use nvim".
+
+## Choosing a Neovim instance (multi-instance)
+
+1. Call `connect` with no args. If exactly one instance → use it.
+2. If several are listed, **do not ask the user by default**. Pick the instance
+   whose **`cwd`** is the Cursor workspace root or a subdirectory of it (same
+   git repo as the agent).
+3. If multiple instances match that repo, prefer the one whose
+   **`active_window.file`** (or most `buffers`) lies under that workspace.
+4. Ask the user to pick only when **no** instance matches the workspace repo,
+   or two instances are tied on the same repo and you cannot tell which is
+   active.
+
+After selecting, call `get_state_brief` before other nvim-mcp actions.
+
+## Opening and viewing files
+
+When the user wants to open or view a file (or you need them to see a location):
+
+1. Resolve path **relative to the connected instance's `cwd`** when possible.
+2. Open in Neovim: `send_command("e path/to/file.rb")` or, if a terminal
+   window is active, `send_command(["wincmd p", "e path/to/file.rb", "wincmd p"])`.
+3. To show a specific line: `send_command("e +42 path/to/file.rb")` or
+   `send_command("42")` after editing the buffer.
+4. Use `read_buf_range` / `read_full_buf` for content **after** the buffer is
+   open (or if already in `buffers`).
+
+Do not only read the file with the disk Read tool and paste in chat when the
+intent is for the user to **see it in their editor**.
 
 ## Rules
 
@@ -79,7 +142,7 @@ call, every item. Example: `text=["※ swap if reversed"]`.**
 - `position`: default `"eol"`. Use `"above"` / `"below"` only when the
   annotated line is already long.
 
-## Multi-instance
+## Multi-instance (summary)
 
-Multiple Neovim instances: `connect` lists them. Ask the user which
-one — don't guess
+See **Choosing a Neovim instance** above: match workspace repo first; ask only
+if no match or a true tie.
