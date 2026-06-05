@@ -62,7 +62,7 @@ if [ "$system_type" = "Darwin" ]; then
 
     alias python3="/opt/homebrew/bin/python3.11"
     export PYTHON="/Users/ec825m/.pyenv/shims/python"
-    PATH=$(pyenv root)/shims:$PATH
+    #PATH=$(pyenv root)/shims:$PATH
 
     # Lazy load nvm
     export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "$HOME/.nvm" || printf %s "$XDG_CONFIG_HOME/nvm")"
@@ -97,3 +97,8 @@ if [ "$system_type" = "Darwin" ]; then
 fi
 
 export PATH=/Users/ec825m/.opencode/bin:$PATH
+export PATH="$HOME/.local/bin:$PATH"
+eval "$(/opt/homebrew/bin/mise activate zsh)"
+
+# Local secrets — not tracked by yadm
+[ -f "$HOME/.config/secrets.sh" ] && source "$HOME/.config/secrets.sh"

@@ -1,5 +1,20 @@
 -- Environment setup for Neovim
--- Ensure node/npm are in PATH for formatters and LSP
+-- Ensure node/npm and local CLI tools are in PATH
+
+local function prepend_path(dir)
+  if dir == "" or vim.fn.isdirectory(dir) == 0 then
+    return
+  end
+
+  local current_path = vim.env.PATH or ""
+  if not string.find(current_path, dir, 1, true) then
+    vim.env.PATH = dir .. ":" .. current_path
+  end
+end
+
+local function setup_local_bin_path()
+  prepend_path(vim.fn.expand("~/.local/bin"))
+end
 
 local function setup_node_path()
   -- Get the nvm directory
@@ -23,5 +38,5 @@ local function setup_node_path()
   end
 end
 
--- Call the setup function
+setup_local_bin_path()
 setup_node_path()
