@@ -35,6 +35,10 @@ return {
         
         -- Lua
         lua = { 'stylua' },
+
+        -- ***REDACTED*** / ***REDACTED*** (***REDACTED*** uses ***REDACTED*** via bundle)
+        ***REDACTED*** = { '***REDACTED***', lsp_format = false },
+        ***REDACTED*** = { '***REDACTED***', lsp_format = false },
       },
       
       -- Format on save
@@ -93,6 +97,26 @@ return {
             '$FILENAME',
             '--rules=@PSR12',
           },
+          stdin = false,
+        },
+
+        ***REDACTED*** = {
+          command = function()
+            local root = vim.fs.dirname(vim.fs.find({
+              '***REDACTED***',
+              '.***REDACTED***.yml',
+            }, { upward = true })[1])
+
+            if root then
+              local ***REDACTED*** = root .. '/bin/***REDACTED***'
+              if vim.fn.executable(***REDACTED***) == 1 then
+                return ***REDACTED***
+              end
+            end
+
+            return '***REDACTED***'
+          end,
+          args = { '--autocorrect', '--stderr', '--stdout', '--display-cop-names', '--extra-details', '--format', 'simple', '$FILENAME' },
           stdin = false,
         },
       },

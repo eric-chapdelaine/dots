@@ -7,10 +7,7 @@ alwaysApply: true
 
 General instructions for AI coding agents working in personal and professional projects.
 
-**Cursor + Neovim:** The user edits in Neovim and plans in Cursor IDE. For
-"this function", "here", open/show/go-to file, or cursor-context questions,
-follow `~/.cursor/rules/nvim-mcp.mdc` — use nvim-mcp against the Neovim
-instance whose `cwd` matches the current workspace repo.
+**Workflow:** Primary work happens in the Cursor CLI. The user also has a Neovim instance open for navigation and reading, but it is not connected via MCP — do not attempt to control it. Make all edits directly to the local filesystem using available file tools.
 
 ---
 
@@ -40,6 +37,36 @@ Write a 1–2 line comment explaining *why* something non-obvious is happening o
 ### React: functional components with hooks, 2-space indent
 ### Java: Google Java Style, 2-space indent, 120 char line limit, K&R braces, full Javadoc on public APIs, test naming `test{Method}_when{Scenario}_then{Outcome}`
 ### PHP: PSR-12, typed properties, dependency injection, PHPUnit tests
+
+---
+
+## Manual Testing via Firefox DevTools MCP
+
+After making any change that can be tested locally (frontend changes, backend changes exercisable via the local instance), verify the result using the `firefox-devtools` MCP:
+
+1. Navigate to the relevant local URL (e.g. `http://localhost:3005`).
+2. Check for console errors and network requests to confirm the expected behavior.
+3. Take a screenshot to visually confirm UI changes.
+4. Check docker logs alongside browser network logs for backend-originated errors.
+
+Do not skip this step for changes that affect the browser — actually exercise the change and confirm it works before reporting done.
+
+### Firefox MCP: how it works and how to avoid "Not connected"
+
+The `firefox-devtools` MCP server **launches and owns Firefox itself** using a dedicated profile (`hKRCVEwW.Profile 1`). It does not attach to an already-running Firefox instance. This means:
+
+- **Firefox must be closed before the Cursor window opens.** If Firefox is running when Cursor starts, the MCP fails to launch it during initialization and enters a permanent "Not connected" state for that session.
+- **Never manually open Firefox during a session.** Use `restart_firefox` with `firefoxPath: "/Applications/Firefox.app/Contents/MacOS/firefox"` to relaunch it under MCP control instead.
+- **If the MCP shows "Not connected":** ask the user to close Firefox and reload the Cursor window (`Cmd+Shift+P` → Reload Window). The MCP will successfully launch Firefox on the next tool call.
+- **Never use `open -a Firefox` or `-P "Profile 1"` flags** to open Firefox for MCP use — this opens on the wrong profile and blocks the MCP from owning the session.
+- **Never run `pkill -f firefox` or any command that kills Firefox without explicit confirmation from the user.** The user may have important tabs open in their default profile. Always ask first.
+- **The "browser is under remote control" banner** on the user's default profile windows is expected and harmless — Firefox runs as a single process on macOS, so the MCP's automation flags apply to all windows in that process. It does not indicate anything is wrong.
+
+---
+
+## Git: Never Auto-commit or Push
+
+**Never run `git commit`, `git push`, or any command that writes to the remote.** Make changes only on the local filesystem. The user reviews all changes and handles commits and pushes manually.
 
 ---
 
