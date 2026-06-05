@@ -7,10 +7,13 @@ This document covers all custom plugins added to enhance code navigation, contex
 2. [nvim-treesitter-context (Sticky Headers)](#2-nvim-treesitter-context-sticky-function-header)
 3. [glance.nvim (LSP Peek)](#3-glancenvim-lsp-navigation-peek-window)
 4. [toggleterm.nvim (Terminal Management)](#4-toggletermnvim-terminal-management)
-5. [opencode.nvim (AI Integration)](#5-opencodenvim-opencode-integration)
-6. [blame.nvim (Git Blame with Commit Messages)](#6-blamenvim-git-blame-with-commit-messages)
-7. [vim-rhubarb (GitHub Integration)](#7-vim-rhubarb-github-integration)
-8. [Workflow Examples](#workflow-examples)
+5. [cursoragent.nvim (Cursor Agent)](#5-cursoragentnvim-cursor-agent-integration)
+6. [nvim-mcp (Cursor IDE control)](#6-nvim-mcp-cursor-ide-control)
+7. [blame.nvim (Git Blame with Commit Messages)](#7-blamenvim-git-blame-with-commit-messages)
+8. [vim-rhubarb (GitHub Integration)](#8-vim-rhubarb-github-integration)
+9. [vim-rails (Rails Navigation)](#9-vim-rails-rails-navigation)
+10. [vim-test (Run RSpec from Neovim)](#10-vim-test-run-rspec-from-neovim)
+11. [Workflow Examples](#workflow-examples)
 
 ---
 
@@ -209,96 +212,60 @@ When inside a terminal, use these keybindings:
 
 ---
 
-## 5. opencode.nvim (OpenCode Integration)
+## 5. cursoragent.nvim (Cursor Agent Integration)
 
 ### What it does:
-- Integrates OpenCode AI directly into Neovim
-- Allows AI-assisted code editing, explanations, and fixes
-- Provides terminal integration for opencode TUI
-- Supports context injection (@this, @buffer, @diagnostics, etc.)
+- Runs the Cursor Agent CLI inside Neovim
+- Neovim exposes an MCP bridge so the agent can read buffers, selections, and diagnostics
+- Supports agent, ask, plan, and resume modes
+- Auto-reloads buffers when the agent edits files on disk
 
 ### Keybindings:
-**Main commands:**
-- `<leader>oa` - Ask opencode with @this context (works in normal and visual mode)
-- `<leader>ox` - Select from all opencode actions (prompts, commands, provider controls)
-- `<leader>ot` - Toggle opencode terminal
-- `<leader>oo` - Operator mode: add range to opencode (use with motions like `ip`, `ap`)
-- `<leader>ol` - Add current line to opencode
-
-**Quick prompts:**
-- `<leader>oe` - Explain code (@this context)
-- `<leader>or` - Review code for correctness and readability
-- `<leader>of` - Fix diagnostics/issues
-- `<leader>od` - Document code (add comments)
-
-**Session management:**
-- `<leader>os` - Select/switch opencode session
-- `<leader>oc` - Create new session (clear)
+- `<leader>ca` - Toggle Cursor Agent terminal
+- `<leader>cq` - Open in ask mode (read-only Q&A)
+- `<leader>cp` - Open in plan mode (read-only planning)
+- `<leader>cr` - Resume the most recent session
+- `<leader>cs` - Send visual selection to the agent
+- `<leader>cb` - Send the current buffer to the agent
 
 ### Usage:
-
-**Basic ask workflow:**
-1. Select some code in visual mode (or place cursor on something)
-2. Press `<leader>oa`
-3. Type your request (e.g., "refactor this to use async/await")
-4. OpenCode will respond and make changes as needed
-
-**Using the select menu:**
-1. Press `<leader>ox` to open the action menu
-2. Choose from pre-configured prompts, commands, or provider controls
-3. Select one to execute it
-
-**Quick actions:**
-1. Select code in visual mode
-2. Press `<leader>oe` to explain it
-3. Or `<leader>of` to fix issues
-4. Or `<leader>od` to add documentation
-
-**Operator mode (powerful!):**
-1. Press `<leader>oo` then a motion:
-   - `<leader>ooip` - Add inner paragraph to opencode
-   - `<leader>oo}` - Add to end of block
-   - `<leader>ooG` - Add to end of file
-2. OpenCode will include that range in context
-
-**Working with the terminal:**
-1. Press `<leader>ot` to toggle the opencode terminal
-2. Interact with opencode's TUI directly
-3. Press `<leader>ot` again to toggle it away
-
-### Context placeholders:
-You can use these in prompts to inject context:
-- `@this` - Current selection/range or cursor position
-- `@buffer` - Current buffer
-- `@buffers` - All open buffers
-- `@visible` - Visible text in window
-- `@diagnostics` - LSP diagnostics
-- `@diff` - Git diff
-- `@quickfix` - Quickfix list
-
-Example: `<leader>oa` then type: "Review @this and check @diagnostics"
-
-### Built-in prompts:
-When you press `<leader>ox`, you can select from:
-- **explain** - Explain code and its context
-- **review** - Review for correctness and readability
-- **fix** - Fix diagnostics
-- **document** - Add documentation comments
-- **test** - Add tests
-- **optimize** - Optimize for performance and readability
-- **implement** - Implement stub/TODO
-- **diagnostics** - Explain diagnostics
+1. Open a project and press `<leader>ca` to toggle the agent terminal
+2. Ask the agent to explain, refactor, or fix code in the project root
+3. Select code in visual mode and press `<leader>cs` to send just that range
+4. Use `<leader>cr` to continue a previous conversation
 
 ### Tips:
-- OpenCode will auto-start in a Neovim terminal when needed
-- Files edited by opencode are automatically reloaded
-- Use `<Up>` arrow in prompts to browse recent asks
-- End prompt with `\n` to append instead of submit
-- The terminal keymaps work inside opencode: `<C-u>`, `<C-d>`, `gg`, `G`
+- The terminal opens on the right at 40% width by default
+- MCP servers from `~/.cursor/mcp.json` and project `.cursor/mcp.json` are available to the agent
+- Requires `cursor-agent` at `~/.local/bin/cursor-agent`
 
 ---
 
-## 6. blame.nvim (Git Blame with Commit Messages)
+## 6. nvim-mcp (Cursor IDE Control)
+
+### What it does:
+- Lets Cursor IDE view and control your running Neovim session(s)
+- Uses Neovim's native RPC socket — no extra Neovim plugin required
+- Configured globally in `~/.cursor/mcp.json` and `~/.cursor/rules/nvim-mcp.mdc`
+
+### Neovim commands:
+- `:McpServerAddress` - Print this instance's RPC socket path
+- `:McpClearHighlights` - Clear MCP highlight annotations
+- `:McpClearVirtualTexts` - Clear MCP virtual text annotations
+
+### Usage:
+1. Start Neovim normally — each instance auto-starts an RPC server
+2. In Cursor IDE, use Agent chat with nvim-mcp tools enabled
+3. If multiple Neovim instances are running, tell Cursor which one to connect to
+
+### Tips:
+- Restart Cursor after MCP config changes
+- For a fixed socket per instance, start Neovim with `nvim --listen /tmp/my.sock`
+- Requires `uvx nvim-mcp` (installed via `~/.local/bin/uvx`)
+
+---
+
+## 7. blame.nvim (Git Blame with Commit Messages)
 
 ### What it does:
 - Shows git blame in a fugitive-style vertical split
@@ -425,7 +392,7 @@ a3347a5 • Add Neovim plugins: folding, context, glance • 2026-02-22
 
 ---
 
-## 7. vim-rhubarb (GitHub Integration)
+## 8. vim-rhubarb (GitHub Integration)
 
 ### What it does:
 - Extends vim-fugitive with GitHub-specific features
@@ -553,6 +520,131 @@ For autocomplete features, generate a personal access token:
 
 ---
 
+## 9. vim-rails (Rails Navigation)
+
+### What it does:
+- Teaches Neovim about Rails project conventions so you can jump between related files instantly
+- Understands the naming rules Rails uses (controller → spec, model → view, routes → controller, etc.)
+- Enhances `gf` (go to file) so it works on Rails-style references like `:sku_options` in routes
+- Provides ex commands for navigating to any Rails file type by name
+
+### Commands:
+
+**`:A`** — Alternate file (most useful command)
+- In a controller → jumps to its spec
+- In a spec → jumps back to the source file
+- In a model → jumps to its spec
+
+**`:Econtroller <name>`** — Open a controller by name
+- `:Econtroller sku_options` → opens `app/controllers/.../sku_options_controller.rb`
+- `:Econtroller api/internal/catalog/skus` → opens that nested controller
+
+**`:Emodel <name>`** — Open a model by name
+- `:Emodel sku` → opens `app/models/sku.rb`
+- `:Emodel lab/order` → opens `app/models/lab/order.rb`
+
+**`:Espec <name>`** — Open a spec by name
+- `:Espec models/sku` → opens `spec/models/sku_spec.rb`
+
+**`:Eroutes`** — Open `config/routes.rb`
+
+**`:Emigration`** — Open the most recent migration
+
+**`:Eschema`** — Open `db/schema.rb`
+
+**`:Einitializer <name>`** — Open an initializer by name
+
+**`gf`** — Go to file (enhanced by vim-rails)
+- Cursor on `:sku_options` in routes.rb → opens the controller
+- Cursor on a `render 'partial_name'` → opens the partial
+- Cursor on a `require` path → opens the file
+
+### Usage:
+
+**Jump to the controller for a route:**
+```
+1. Open config/routes.rb
+2. Put cursor on :sku_options
+3. Press gf → opens Api::External::SkuOptionsController
+```
+
+**Jump between controller and spec:**
+```
+1. Open any controller (e.g. skus_controller.rb)
+2. Press :A → jumps to spec/controllers/.../skus_controller_spec.rb
+3. Press :A again → jumps back to the controller
+```
+
+**Open any model by name:**
+```
+:Emodel care/plan     → app/models/care/plan.rb
+:Emodel sku_category  → app/models/sku_category.rb
+```
+
+### Tips:
+- `:A` is the command you'll use most — build the muscle memory
+- All `E` commands support tab-completion
+- Works with nested namespaces using `/` as the separator
+- `gf` on a partial name in a `render` call opens the partial file
+
+---
+
+## 10. vim-test (Run RSpec from Neovim)
+
+### What it does:
+- Runs RSpec tests without leaving Neovim
+- Runs the nearest test, the whole file, or the last test with single keymaps
+- Output appears in Terminal 1 (the horizontal split at the bottom)
+- Runs tests via `docker compose exec rails bundle exec rspec` (inside the Rails container)
+
+### Keybindings:
+- `<leader>rn` - Run the test **nearest** to your cursor
+- `<leader>rf` - Run all tests in the **current file**
+- `<leader>rl` - **Re-run** the last test that was run
+- `<leader>rs` - Run the **full suite** (use sparingly — runs everything)
+
+### Usage:
+
+**Run a single test:**
+```
+1. Open a spec file (e.g. spec/models/sku_spec.rb)
+2. Put your cursor anywhere inside an `it` block
+3. Press <leader>rn → runs just that one example
+4. Output appears in the terminal split at the bottom
+```
+
+**Run all tests in a file:**
+```
+1. Open any spec file
+2. Press <leader>rf → runs the whole file
+3. Toggle Terminal 1 (<leader>tt) to see full output if it scrolled past
+```
+
+**Re-run after making a fix:**
+```
+1. A test fails
+2. Edit the implementation
+3. Press <leader>rl → re-runs the exact same test without moving your cursor
+```
+
+### Workflow: TDD loop
+```
+1. Open the spec file and navigate to the test you're working on
+2. Press <leader>rn — test fails (expected)
+3. Press <leader>tt to read the failure output
+4. Press <leader>tt again to return to code
+5. Edit the implementation
+6. Press <leader>rl to re-run — no need to navigate back to the spec
+7. Repeat until green
+```
+
+### Tips:
+- `<leader>rn` detects the nearest `it`, `describe`, or `context` block — works from anywhere inside it
+- The terminal persists between runs so you can scroll back through output
+- `<leader>rl` is the most-used binding — run it from anywhere after a failure
+
+---
+
 ## Workflow Examples
 
 ### Example 1: Understanding a Large Function
@@ -567,8 +659,8 @@ For autocomplete features, generate a personal access token:
 2. Use `gpr` to see all references to that function
 3. Navigate through references with `j`/`k` to understand usage
 4. Close glance and select the function in visual mode
-5. Press `<leader>oa` and ask OpenCode to refactor it
-6. Review the changes OpenCode makes
+5. Press `<leader>ca` and ask Cursor Agent to refactor it
+6. Review the changes in the diff view
 
 ### Example 3: Navigating Nested Code
 1. You're deep in a nested function and lost context
@@ -592,7 +684,7 @@ For autocomplete features, generate a personal access token:
 2. Press `gpd` on a function to see its definition
 3. Press `<leader>t2` to open a REPL and test the function
 4. See the error? Press `<leader>t2` to return to code
-5. Use `<leader>of` (OpenCode fix) on the problematic code
+5. Use `<leader>cs` to send the problematic code to Cursor Agent for a fix
 6. Press `<leader>t2` to test again in REPL
 7. Use `zM` to fold all and see the bigger picture
 
@@ -616,7 +708,7 @@ All plugin configurations are in `~/.config/nvim/lua/plugins/`:
 - `context.lua` - nvim-treesitter-context configuration
 - `glance.lua` - glance.nvim configuration
 - `toggleterm.lua` - toggleterm.nvim configuration
-- `opencode-nvim.lua` - OpenCode integration
+- `cursoragent.lua` - Cursor Agent CLI integration
 
 ### Modified Core Files
 
@@ -635,7 +727,7 @@ To verify everything is working:
 3. **Test context**: Scroll into a function - should see function header at top
 4. **Test glance**: Put cursor on a function and press `gpd` - should see peek window
 5. **Test terminal**: Press `<leader>tt` - should open terminal at bottom
-6. **Test OpenCode**: Press `<leader>oa` - should prompt for OpenCode query
+6. **Test Cursor Agent**: Press `<leader>ca` - should open the agent terminal
 
 ### Troubleshooting
 
@@ -657,9 +749,10 @@ To verify everything is working:
 - Make sure you're in normal mode (press `<Esc>` if in terminal mode)
 - Try closing and reopening Neovim
 
-**OpenCode not responding:**
-- Make sure `opencode` CLI is installed and in PATH
-- Check `:checkhealth` for any issues
+**Cursor Agent not responding:**
+- Make sure `cursor-agent` is installed at `~/.local/bin/cursor-agent`
+- Run `cursor-agent status` in a shell to verify auth
+- Check `:Lazy` shows `cursoragent.nvim` installed
 
 ---
 
@@ -698,15 +791,15 @@ To verify everything is working:
 | `<leader>t4` | Terminal 4 (fullscreen) |
 | `<Esc>` | Exit terminal mode |
 
-### OpenCode
+### Cursor Agent
 | Key | Action |
 |-----|--------|
-| `<leader>oa` | Ask with context |
-| `<leader>ox` | Action menu |
-| `<leader>oe` | Explain code |
-| `<leader>of` | Fix issues |
-| `<leader>or` | Review code |
-| `<leader>od` | Document code |
+| `<leader>ca` | Toggle agent terminal |
+| `<leader>cq` | Ask mode |
+| `<leader>cp` | Plan mode |
+| `<leader>cr` | Resume session |
+| `<leader>cs` | Send selection |
+| `<leader>cb` | Send buffer |
 
 ### Git Blame
 | Key | Action |
@@ -726,6 +819,26 @@ To verify everything is working:
 | `:GBrowse!` | Copy GitHub URL |
 | `<C-X><C-O>` | Autocomplete (in commits) |
 
+### Rails Navigation
+| Command | Action |
+|---------|--------|
+| `:A` | Alternate file (controller ↔ spec) |
+| `:Econtroller <name>` | Open controller by name |
+| `:Emodel <name>` | Open model by name |
+| `:Espec <name>` | Open spec by name |
+| `:Eroutes` | Open routes.rb |
+| `:Emigration` | Open latest migration |
+| `:Eschema` | Open schema.rb |
+| `gf` | Go to Rails file under cursor |
+
+### RSpec (vim-test)
+| Key | Action |
+|-----|--------|
+| `<leader>rn` | Run nearest test |
+| `<leader>rf` | Run test file |
+| `<leader>rl` | Re-run last test |
+| `<leader>rs` | Run full suite |
+
 ---
 
 ## Summary of Changes
@@ -736,10 +849,12 @@ This configuration adds the following capabilities to Neovim:
 2. **Sticky Headers** - Always see what function/class you're in
 3. **LSP Peek Windows** - View definitions and references without losing your place
 4. **Terminal Management** - Run multiple persistent terminals alongside your code
-5. **AI Integration** - Get help from OpenCode directly in your editor
+5. **AI Integration** - Cursor Agent inside Neovim, plus Cursor IDE control via nvim-mcp
 6. **Git Blame with Commit Messages** - See why code changed, not just who changed it
 7. **GitHub Integration** - Open files and commits on GitHub, autocomplete issues in commits
 8. **Auto-starting LSP** - Language servers automatically start when opening files
+9. **Rails Navigation** - Jump between controllers, models, specs, and routes by convention
+10. **RSpec Runner** - Run nearest test, file, or last test without leaving Neovim
 
 All features work together to create a powerful code navigation and development environment.
 
@@ -751,4 +866,5 @@ The following plugin files are configured:
 - `lua/plugins/context.lua` - nvim-treesitter-context
 - `lua/plugins/glance.lua` - LSP peek windows
 - `lua/plugins/toggleterm.lua` - Terminal management
-- `lua/plugins/opencode-nvim.lua` - OpenCode AI integration
+- `lua/plugins/cursoragent.lua` - Cursor Agent CLI integration
+- `lua/plugins/rails.lua` - vim-rails (Rails navigation) + vim-test (RSpec runner)

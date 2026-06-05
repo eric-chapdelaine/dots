@@ -35,6 +35,10 @@ return {
         
         -- Lua
         lua = { 'stylua' },
+
+        -- Ruby / Rails (Nile-Core uses RuboCop via bundle)
+        ruby = { 'rubocop', lsp_format = false },
+        eruby = { 'rubocop', lsp_format = false },
       },
       
       -- Format on save
@@ -93,6 +97,26 @@ return {
             '$FILENAME',
             '--rules=@PSR12',
           },
+          stdin = false,
+        },
+
+        rubocop = {
+          command = function()
+            local root = vim.fs.dirname(vim.fs.find({
+              'Gemfile',
+              '.rubocop.yml',
+            }, { upward = true })[1])
+
+            if root then
+              local bundle_rubocop = root .. '/bin/rubocop'
+              if vim.fn.executable(bundle_rubocop) == 1 then
+                return bundle_rubocop
+              end
+            end
+
+            return 'rubocop'
+          end,
+          args = { '--autocorrect', '--stderr', '--stdout', '--display-cop-names', '--extra-details', '--format', 'simple', '$FILENAME' },
           stdin = false,
         },
       },

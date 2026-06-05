@@ -1,9 +1,10 @@
 return {
   {
     "nvim-telescope/telescope.nvim",
-    version = "0.1.8",
+    -- Master required: 0.1.x previewer breaks with nvim-treesitter main (no ft_to_lang).
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
+      require('telescope').setup({})
       local builtin = require('telescope.builtin')
       vim.keymap.set('n', '<leader>sf', builtin.git_files, { desc = 'Telescope find git files' })
       vim.keymap.set('n', '<leader>sr', builtin.find_files, { desc = 'Telescope find files' })
