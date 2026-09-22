@@ -47,6 +47,9 @@ fi
 ################
 
 if [ "$system_type" = "Darwin" ]; then
+    # Prioritize Homebrew binaries (e.g. python3) over the older system ones in /usr/bin
+    export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+
     alias ra="ranger ."
 
     alias vim='nvim'
@@ -54,14 +57,13 @@ if [ "$system_type" = "Darwin" ]; then
 
     alias goose='~/goose'
 
-    export PATH="/Users/ec825m/.local/bin:$PATH"
+    # export PATH="/Users/ec825m/.local/bin:$PATH"
 
     source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
     alias ctags="/opt/homebrew/bin/ctags"
 
-    alias python3="/opt/homebrew/bin/python3.11"
-    export PYTHON="/Users/ec825m/.pyenv/shims/python"
+    # export PYTHON="/Users/ec825m/.pyenv/shims/python"
     #PATH=$(pyenv root)/shims:$PATH
 
     # Lazy load nvm
@@ -78,14 +80,14 @@ if [ "$system_type" = "Darwin" ]; then
       nvm "$@"
     }
 
-    # Add node v18 directly to PATH (bypasses nvm for faster shell startup)
-    export PATH="$HOME/.nvm/versions/node/v18.20.4/bin:$PATH"
+    # Add node v24 directly to PATH (bypasses nvm for faster shell startup)
+    export PATH="$HOME/.nvm/versions/node/v24.2.0/bin:$PATH"
 
     # The next line updates PATH for the Google Cloud SDK.
-    if [ -f '/Users/ec825m/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ec825m/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+    # if [ -f '/Users/ec825m/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ec825m/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 
     # The next line enables shell command completion for gcloud.
-    if [ -f '/Users/ec825m/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ec825m/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+    # if [ -f '/Users/ec825m/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ec825m/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
     export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
@@ -96,9 +98,14 @@ if [ "$system_type" = "Darwin" ]; then
     [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
 
-export PATH=/Users/ec825m/.opencode/bin:$PATH
+# export PATH=/Users/ec825m/.opencode/bin:$PATH
 export PATH="$HOME/.local/bin:$PATH"
+
+# for Cursor Opencode proxy
+export CURSOR_ACP_FORCE=false
 eval "$(/opt/homebrew/bin/mise activate zsh)"
 
 # Local secrets — not tracked by yadm
 [ -f "$HOME/.config/secrets.sh" ] && source "$HOME/.config/secrets.sh"
+
+alias qmd='~/.nvm/versions/node/v24.13.1/bin/node ~/.nvm/versions/node/v24.13.1/lib/node_modules/@tobilu/qmd/dist/cli/qmd.js'                   

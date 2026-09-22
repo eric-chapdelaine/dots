@@ -105,11 +105,11 @@ Spec: [<Title>](<URL>)        ← if a product spec was provided
 
 # <Repo Name> Changes
 
-## `[<Repo>]` <Ticket-level unit of work> — <S/M/L/XL> pts
+## `[<Repo>]` <unit of work> — <S/M/L/XL> pts
 
 <2–4 sentences describing what needs to change and why. Note the pattern to follow if one exists.>
 
-**Key decisions / open items for this ticket:**
+**Key decisions / open items:**
 - <anything unresolved that the implementing engineer must decide or confirm>
 
 ... (repeat per repo, per logical unit of work)

@@ -1,6 +1,6 @@
 ---
 name: review-pr
-description: Review a GitHub pull request end-to-end — reads the PR, the linked issue/ticket, and relevant repo context, then produces a structured review categorized by severity and confidence. Never writes to GitHub.
+description: Review a GitHub pull request end-to-end — reads the PR and relevant repo context, then produces a structured review categorized by severity and confidence. Never writes to GitHub.
 ---
 
 ## What I do
@@ -8,11 +8,10 @@ description: Review a GitHub pull request end-to-end — reads the PR, the linke
 Given a GitHub PR URL:
 
 1. Read the PR fully — title, description, all changed files, and all inline diff hunks
-2. Extract the linked issue/ticket ID from the PR description and read that ticket
-3. Understand the broader repo context — what the repo does, what patterns it follows, and how the changed files fit in
-4. Determine whether the PR actually solves the problem stated in the ticket
-5. Evaluate whether the approach is the best available solution given the codebase
-6. Produce a structured written review (printed to the user — never posted to GitHub)
+2. Understand the broader repo context — what the repo does, what patterns it follows, and how the changed files fit in
+3. Determine whether the PR accomplishes what its description claims
+4. Evaluate whether the approach is the best available solution given the codebase
+5. Produce a structured written review (printed to the user — never posted to GitHub)
 
 ---
 
@@ -21,18 +20,11 @@ Given a GitHub PR URL:
 ### 1. Read the PR
 
 Use the GitHub CLI (`gh`) to fetch:
-- PR metadata: title, description, base branch, author, labels, linked issues
+- PR metadata: title, description, base branch, author, labels
 - Full file diff for every changed file
 - Any inline comments already on the PR
 
-### 2. Read the linked ticket
-
-Extract the ticket ID from the PR description. Use whatever issue tracker is linked (GitHub Issues, Jira, Linear, etc.) to read:
-- Ticket summary and description
-- Acceptance criteria
-- Any linked tickets or context
-
-### 3. Understand repo context
+### 2. Understand repo context
 
 Read enough of the surrounding codebase to understand:
 - The architecture and patterns in the changed area
@@ -42,14 +34,13 @@ Read enough of the surrounding codebase to understand:
 
 Do not skip this step. If the changed code is part of a critical subsystem, read the surrounding files to understand the full impact.
 
-### 4. Assess alignment with the ticket
+### 3. Assess alignment with the stated goal
 
 Answer explicitly:
-- Does the PR solve the problem described in the ticket?
-- Does it satisfy the acceptance criteria (if present)?
-- Are there edge cases in the ticket that the PR does not address?
+- Does the PR accomplish what its title and description claim?
+- Are there obvious gaps or edge cases the PR does not address?
 
-### 5. Assess solution quality
+### 4. Assess solution quality
 
 Answer explicitly:
 - Is this the best way to solve the problem given the existing codebase?
@@ -69,7 +60,6 @@ Print the review to the user using this structure. Never post or push anything t
 **Repo:** <repo>
 **Author:** <author>
 **Branch:** <head> → <base>
-**Ticket:** <ticket-id> — <ticket-summary>
 
 ---
 
@@ -77,9 +67,9 @@ Print the review to the user using this structure. Never post or push anything t
 
 <2–4 sentence plain-English summary of what the PR does and why.>
 
-### Ticket Alignment
+### Goal Alignment
 
-<Does the PR solve the stated problem? Does it meet acceptance criteria? Note any gaps.>
+<Does the PR accomplish what its description claims? Note any gaps.>
 
 ### Solution Assessment
 
