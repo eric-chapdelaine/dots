@@ -47,13 +47,17 @@ return {
         if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
           return
         end
-        
-        -- Disable format on save for certain filetypes
-        local disable_filetypes = { c = true, cpp = true, yaml = true }
-        if disable_filetypes[vim.bo[bufnr].filetype] then
+
+        local ft = vim.bo[bufnr].filetype
+        if ft == 'c' or ft == 'cpp' or ft == 'markdown' or ft:find('yaml', 1, true) then
           return
         end
-        
+
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        if bufname:match('%.ya?ml$') or bufname:match('%.md$') then
+          return
+        end
+
         return {
           timeout_ms = 1000,
           lsp_fallback = true,

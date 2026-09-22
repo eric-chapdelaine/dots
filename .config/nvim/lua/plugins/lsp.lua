@@ -185,6 +185,7 @@ return {
 					end,
 					init_options = {
 						formatter = 'none',
+						linters = {},
 					},
 				},
 				-- java_language_server = {
