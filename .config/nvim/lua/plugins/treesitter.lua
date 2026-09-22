@@ -6,7 +6,7 @@ return {
     config = function()
       local treesitter = require('nvim-treesitter')
 
-      -- Parsers for Nile-Core (Ruby/Rails, YAML, ERB) and NileWebApps (TS/TSX, CSS, JSON).
+      -- Preferred language parsers
       local preferred_parsers = {
         'bash',
         'c',

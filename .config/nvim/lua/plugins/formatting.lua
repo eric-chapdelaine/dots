@@ -36,7 +36,7 @@ return {
         -- Lua
         lua = { 'stylua' },
 
-        -- Ruby / Rails (Nile-Core uses RuboCop via bundle)
+        -- Ruby / Rails (RuboCop via bundle)
         ruby = { 'rubocop', lsp_format = false },
         eruby = { 'rubocop', lsp_format = false },
       },
