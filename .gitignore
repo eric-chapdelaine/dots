@@ -1,0 +1,12 @@
+# Nile-specific paths (not to be tracked)
+.config/opencode/skills/create-pr/SKILL.md
+.config/opencode/skills/run-repos-locally/SKILL.md
+.config/opencode/skills/workflow-storybook-testing/SKILL.md
+.Nile-Core/
+.NileWebApps/
+Nile-Core/
+NileWebApps/
+/opt/nile-core
+/opt/nile-webapps
+/agent/repos/Nile-Core/
+/agent/repos/NileWebApps/
