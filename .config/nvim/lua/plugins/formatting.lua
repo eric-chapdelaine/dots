@@ -36,7 +36,7 @@ return {
         -- Lua
         lua = { 'stylua' },
 
-        -- ***REDACTED*** / ***REDACTED*** (***REDACTED*** uses ***REDACTED*** via bundle)
+        -- ***REDACTED*** / ***REDACTED*** (***REDACTED*** via bundle)
         ***REDACTED*** = { '***REDACTED***', lsp_format = false },
         ***REDACTED*** = { '***REDACTED***', lsp_format = false },
       },

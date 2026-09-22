@@ -6,7 +6,7 @@ return {
     config = function()
       local treesitter = require('nvim-treesitter')
 
-      -- Parsers for ***REDACTED*** (***REDACTED***/***REDACTED***, YAML, ERB) and ***REDACTED*** (TS/TSX, CSS, JSON).
+      -- Preferred language parsers
       local preferred_parsers = {
         'bash',
         'c',
