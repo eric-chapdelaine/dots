@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# brightness - adjust the screen backlight without root.
+#
+# Uses systemd-logind's org.freedesktop.login1.Session.SetBrightness()
+# D-Bus method, which is intended for unprivileged desktop use on the
+# active session. Works with the amdgpu backlight on this ThinkPad.
+#
+# Usage: brightness up|down [step_percent]
+#   step_percent defaults to 5 (of max_brightness).
+
+set -euo pipefail
+
+usage() {
+    echo "usage: ${0##*/} up|down [step_percent]" >&2
+    exit 2
+}
+
+action="${1:-}"
+step_pct="${2:-5}"
+
+case "$action" in
+    up|down) ;;
+    *) usage ;;
+esac
+
+if ! [[ "$step_pct" =~ ^[0-9]+$ ]] || (( step_pct < 1 || step_pct > 100 )); then
+    echo "error: step_percent must be an integer between 1 and 100" >&2
+    exit 2
+fi
+
+# Find the first backlight device.
+shopt -s nullglob
+devices=(/sys/class/backlight/*)
+shopt -u nullglob
+if (( ${#devices[@]} == 0 )); then
+    echo "error: no backlight device found" >&2
+    exit 1
+fi
+dev_dir="${devices[0]}"
+dev_name="$(basename "$dev_dir")"
+
+current="$(<"$dev_dir/brightness")"
+maximum="$(<"$dev_dir/max_brightness")"
+
+step=$(( maximum * step_pct / 100 ))
+if (( step < 1 )); then
+    step=1
+fi
+
+case "$action" in
+    up)   new=$(( current + step )) ;;
+    down) new=$(( current - step )) ;;
+esac
+
+if (( new < 0 )); then
+    new=0
+fi
+if (( new > maximum )); then
+    new=maximum
+fi
+
+busctl call org.freedesktop.login1 /org/freedesktop/login1/session/auto \
+    org.freedesktop.login1.Session SetBrightness \
+    ssu backlight "$dev_name" "$new"

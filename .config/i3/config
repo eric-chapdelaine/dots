@@ -41,6 +41,13 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+# Screen brightness: F5 = down, F6 = up (via systemd-logind, no root needed).
+# Also bind the dedicated brightness keysyms so the Fn brightness keys work too.
+bindsym F5 exec --no-startup-id $HOME/.local/bin/brightness down
+bindsym F6 exec --no-startup-id $HOME/.local/bin/brightness up
+bindsym XF86MonBrightnessDown exec --no-startup-id $HOME/.local/bin/brightness down
+bindsym XF86MonBrightnessUp exec --no-startup-id $HOME/.local/bin/brightness up
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
