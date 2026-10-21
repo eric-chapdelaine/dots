@@ -97,3 +97,17 @@ if [ "$system_type" = "Darwin" ]; then
 fi
 
 export PATH=/Users/***REDACTED***/.opencode/bin:$PATH
+
+# opencode
+export PATH=/home/emchap4/.opencode/bin:$PATH
+
+# ***REDACTED***
+export PATH="$(***REDACTED*** -e 'print Gem.user_dir')/bin:$PATH"
+
+# pnpm
+export PNPM_HOME='/home/emchap4/.local/share/pnpm'
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
