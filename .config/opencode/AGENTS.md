@@ -10,7 +10,6 @@
 
 ## Rules
 
-- **Never auto-commit or push.**
 - **Privacy/security first.** Never leak PHI externally.
 - **Minimal changes.** Search all usages before changing shared code.
 - **Ask before going down the wrong path.**

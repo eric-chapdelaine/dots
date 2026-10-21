@@ -7,7 +7,7 @@ return {
       {
         '<leader>f',
         function()
-          require('conform').format({ async = true, lsp_fallback = true })
+          require('conform').format({ async = true, lsp_format = 'never' })
         end,
         mode = '',
         desc = 'Format buffer',
@@ -17,18 +17,18 @@ return {
       -- Define formatters by filetype
       formatters_by_ft = {
         -- TypeScript/JavaScript - use prettier from project
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettier', 'prettierd', stop_after_first = true },
+        typescriptreact = { 'prettier', 'prettierd', stop_after_first = true },
+        javascript = { 'prettier', 'prettierd', stop_after_first = true },
+        javascriptreact = { 'prettier', 'prettierd', stop_after_first = true },
         
         -- Other web formats
-        json = { 'prettierd', 'prettier', stop_after_first = true },
-        yaml = { 'prettierd', 'prettier', stop_after_first = true },
-        markdown = { 'prettierd', 'prettier', stop_after_first = true },
-        html = { 'prettierd', 'prettier', stop_after_first = true },
-        css = { 'prettierd', 'prettier', stop_after_first = true },
-        scss = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettier', 'prettierd', stop_after_first = true },
+        yaml = { 'prettier', 'prettierd', stop_after_first = true },
+        markdown = { 'prettier', 'prettierd', stop_after_first = true },
+        html = { 'prettier', 'prettierd', stop_after_first = true },
+        css = { 'prettier', 'prettierd', stop_after_first = true },
+        scss = { 'prettier', 'prettierd', stop_after_first = true },
         
         -- PHP - use ECS (Easy Coding Standard) for WFE, fall back to php-cs-fixer
         php = { 'ecs', 'php_cs_fixer', stop_after_first = true },
@@ -60,7 +60,7 @@ return {
 
         return {
           timeout_ms = 1000,
-          lsp_fallback = true,
+          lsp_format = 'never',
         }
       end,
       

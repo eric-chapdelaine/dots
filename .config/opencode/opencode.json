@@ -706,6 +706,60 @@
         },
         "glm-5.2-max": {
           "name": "GLM 5.2 Max"
+        },
+        "grok-4.7-low": {
+          "name": "Grok 4.7  Low"
+        },
+        "grok-4.7-low-fast": {
+          "name": "Grok 4.7  Low Fast​​"
+        },
+        "grok-4.7-medium": {
+          "name": "Grok 4.7  Medium"
+        },
+        "grok-4.7-medium-fast": {
+          "name": "Grok 4.7  Medium Fast​​"
+        },
+        "grok-4.7-high": {
+          "name": "Grok 4.7  High"
+        },
+        "grok-4.7-high-fast": {
+          "name": "Grok 4.7  High Fast​​"
+        },
+        "grok-4.7-xhigh": {
+          "name": "Grok 4.7  Extra High"
+        },
+        "grok-4.7-xhigh-fast": {
+          "name": "Grok 4.7  Extra High Fast​​"
+        },
+        "claude-opus-4-8-thinking-low": {
+          "name": "Claude Opus 4.8 1M Low Thinking"
+        },
+        "claude-opus-4-8-thinking-medium": {
+          "name": "Claude Opus 4.8 1M Medium Thinking"
+        },
+        "claude-opus-4-8-thinking-high": {
+          "name": "Claude Opus 4.8 1M Thinking"
+        },
+        "claude-opus-4-8-thinking-xhigh": {
+          "name": "Claude Opus 4.8 1M Extra High Thinking"
+        },
+        "claude-opus-4-8-thinking-max": {
+          "name": "Claude Opus 4.8 1M Max Thinking"
+        },
+        "claude-sonnet-5-5-low": {
+          "name": "Claude Sonnet 5.5  Low"
+        },
+        "claude-sonnet-5-5-medium": {
+          "name": "Claude Sonnet 5.5  Medium"
+        },
+        "claude-sonnet-5-5-high": {
+          "name": "Claude Sonnet 5.5  High"
+        },
+        "claude-sonnet-5-5-xhigh": {
+          "name": "Claude Sonnet 5.5  Extra High"
+        },
+        "claude-sonnet-5-5-max": {
+          "name": "Claude Sonnet 5.5  Max"
         }
       }
     }
