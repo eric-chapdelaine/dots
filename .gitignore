@@ -23,7 +23,7 @@ NileWebApps/
 .pi/agent/models-store.json
 .pi/agent/sessions/
 .pi/agent/bin/
-.pi/agent/npm/
+.pi/agent/npm/node_modules/
 
 # --- OS junk ---
 .DS_Store
