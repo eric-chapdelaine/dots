@@ -3,7 +3,7 @@
 This document covers all custom plugins added to enhance code navigation, context awareness, and terminal management.
 
 ## Table of Contents
-1. [nvim-ufo (Code Folding)](#1-nvim-ufo-enhanced-code-folding)
+1. [Treesitter Folding (built-in)](#1-treesitter-folding-built-in)
 2. [nvim-treesitter-context (Sticky Headers)](#2-nvim-treesitter-context-sticky-function-header)
 3. [glance.nvim (LSP Peek)](#3-glancenvim-lsp-navigation-peek-window)
 4. [toggleterm.nvim (Terminal Management)](#4-toggletermnvim-terminal-management)
@@ -11,37 +11,53 @@ This document covers all custom plugins added to enhance code navigation, contex
 6. [vim-rhubarb (GitHub Integration)](#6-vim-rhubarb-github-integration)
 7. [vim-rails (Rails Navigation)](#7-vim-rails-rails-navigation)
 8. [vim-test (Run RSpec from Neovim)](#8-vim-test-run-rspec-from-neovim)
-11. [Workflow Examples](#workflow-examples)
+9. [Workflow Examples](#workflow-examples)
+10. [Installation & Setup](#installation--setup)
+11. [Quick Reference Card](#quick-reference-card)
+
+> **Scope:** this document covers plugins with custom keymaps/behaviour worth
+> explaining. For the full plugin list, directory layout, and requirements see
+> [`README.md`](./README.md). Plugins *not* covered here: aerial, completion
+> (nvim-cmp/LuaSnip), dap, file-explorer (mini.files), formatting (conform),
+> lsp (lspconfig/Mason), telescope, treesitter, local-fim — all live in
+> `lua/plugins/` and are self-documenting via their `desc` keymaps.
 
 ---
 
-## 1. nvim-ufo (Enhanced Code Folding)
+## 1. Treesitter Folding (built-in)
+
+> **Migrated from nvim-ufo.** nvim-ufo is no longer installed. Folding now uses
+> Neovim's built-in treesitter fold expression, configured in
+> `lua/emchap4/options.lua`:
+>
+> ```lua
+> vim.opt.foldmethod = "expr"
+> vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+> vim.opt.foldlevel = 99
+> vim.opt.foldlevelstart = 99
+> ```
 
 ### What it does:
-- Provides intelligent code folding using treesitter and LSP
-- Shows fold previews without opening the fold
-- Displays fold count and prettier fold text
+- Folds are computed from the treesitter syntax tree (functions, blocks, classes)
+- All folds start **open** (`foldlevel=99`)
+- No fold-preview popup, no custom fold text — that came from nvim-ufo
+
+### Requirements:
+- `tree-sitter` CLI must be installed, or parsers never build and folding
+  silently stops working. See the Requirements section of `README.md`.
 
 ### Keybindings:
-- `za` - Toggle fold under cursor (vim default)
-- `zc` - Close fold under cursor (vim default)
-- `zo` - Open fold under cursor (vim default)
-- `zM` - Close all folds in file
-- `zR` - Open all folds in file
-- `zK` - Peek at folded content in popup (or show hover if not on fold)
-
-### Usage:
-1. Navigate to a function or code block
-2. Press `zc` to fold it - you'll see something like `function myFunc() { ... } ↕ 15 lines`
-3. Press `zo` to unfold it
-4. When cursor is on a folded line, press `zK` to preview the content without opening
-5. Use `zM` to fold everything and get a bird's-eye view of your file structure
-6. Use `zR` to unfold everything when you need to see details
+| Key | Action |
+|---|---|
+| `za` | Toggle fold under cursor |
+| `zc` / `zo` | Close / open fold |
+| `zM` / `zR` | Close all / open all |
+| `zK` | *removed — was an nvim-ufo peek* |
 
 ### Tips:
-- Folds start open by default (foldlevel=99)
-- The fold column on the left shows fold status with icons
-- Folding is based on treesitter, so it understands your code structure
+- If folding does nothing, run `:checkhealth` and confirm treesitter parsers
+  built: `:lua =vim.treesitter.language.get_lang('ruby')`
+- `zR` first if the buffer looks collapsed
 
 ---
 
@@ -647,7 +663,7 @@ The plugins will auto-install on first load thanks to lazy.nvim!
 ### Plugin Files Location
 
 All plugin configurations are in `~/.config/nvim/lua/plugins/`:
-- `folding.lua` - nvim-ufo configuration
+- *(folding is built into `lua/emchap4/options.lua`, no plugin file)*
 - `context.lua` - nvim-treesitter-context configuration
 - `glance.lua` - glance.nvim configuration
 - `toggleterm.lua` - toggleterm.nvim configuration
@@ -678,8 +694,11 @@ To verify everything is working:
 - Make sure you're in a supported language file
 
 **Folding not working:**
-- Check fold settings: `:set foldmethod?` should show "expr"
-- Try `:e` to reload the file
+- Check fold settings: `:set foldmethod?` should show `expr`
+- Confirm a parser exists for the filetype: `:lua =vim.treesitter.language.get_lang(vim.bo.filetype)`
+- Confirm parsers actually built: `ls ~/.local/share/nvim/parser/`
+- The most common cause is a **missing `tree-sitter` CLI** — parsers silently
+  fail to build, and folding depends on them. `:MasonToolsInstall` then `:TSUpdate`.
 - Check treesitter: `:checkhealth nvim-treesitter`
 
 **Glance not working:**
@@ -772,7 +791,7 @@ To verify everything is working:
 
 This configuration adds the following capabilities to Neovim:
 
-1. **Smart Code Folding** - Fold functions, classes, and blocks with treesitter intelligence
+1. **Smart Code Folding** - Fold functions, classes, and blocks with treesitter intelligence (built-in `foldexpr`, no nvim-ufo)
 2. **Sticky Headers** - Always see what function/class you're in
 3. **LSP Peek Windows** - View definitions and references without losing your place
 4. **Terminal Management** - Run multiple persistent terminals alongside your code
@@ -788,7 +807,7 @@ All features work together to create a powerful code navigation and development 
 
 The following plugin files are configured:
 - `lua/plugins/git.lua` - Git-related plugins (fugitive, rhubarb, gitsigns, blame.nvim)
-- `lua/plugins/folding.lua` - nvim-ufo code folding
+- `lua/emchap4/options.lua` - treesitter folding (no plugin; nvim-ufo removed)
 - `lua/plugins/context.lua` - nvim-treesitter-context
 - `lua/plugins/glance.lua` - LSP peek windows
 - `lua/plugins/toggleterm.lua` - Terminal management

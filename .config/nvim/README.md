@@ -1,156 +1,161 @@
 # Neovim Configuration
 
-This is a modular Neovim configuration using lazy.nvim as the plugin manager.
+Modular Neovim config using [lazy.nvim](https://github.com/folke/lazy.nvim).
+Bootstrapped automatically on first launch by `init.lua` — no manual install step.
+
+Runs on Arch Linux and macOS. Where behaviour differs, the OS check is
+`vim.fn.has("mac") == 1` (or `vim.loop`/`uname` for paths).
 
 ## Directory Structure
 
 ```
 ~/.config/nvim/
-├── init.lua                    # Main entry point
+├── init.lua                    # Entry point: loads core, bootstraps lazy.nvim
 ├── lua/
-│   ├── emchap4/               # Core configuration
-│   │   ├── init.lua           # Loads all core modules
-│   │   ├── env.lua            # Environment setup (adds node to PATH)
-│   │   ├── options.lua        # Vim options (line numbers, clipboard, etc.)
-│   │   ├── keymaps.lua        # General keymaps
-│   │   ├── autocmds.lua       # Autocommands
-│   │   └── remap.lua          # (Deprecated - kept for backward compatibility)
-│   └── plugins/               # Plugin configurations
-│       ├── completion.lua     # Blink.cmp autocompletion
-│       ├── file-explorer.lua  # Neo-tree file explorer
-│       ├── formatting.lua     # Code formatting (conform.nvim)
-│       ├── git.lua            # Git integrations (gitsigns, fugitive)
-│       ├── lsp.lua            # LSP configuration
-│       ├── telescope.lua      # Fuzzy finder
-│       └── treesitter.lua     # Syntax highlighting
-└── lazy-lock.json             # Plugin version lockfile
+│   ├── emchap4/                # Core configuration (not plugins)
+│   │   ├── init.lua            # Requires the modules below
+│   │   ├── env.lua             # Environment setup (node on PATH)
+│   │   ├── options.lua         # Vim options (folds, numbers, clipboard)
+│   │   ├── keymaps.lua         # Global keymaps
+│   │   ├── autocmds.lua        # Autocommands
+│   │   └── debug_context.lua   # Debug context helper
+│   └── plugins/                # One file per plugin group
+│       ├── aerial.lua          # Symbol outline
+│       ├── completion.lua      # nvim-cmp + LuaSnip
+│       ├── context.lua         # treesitter-context sticky headers
+│       ├── dap.lua             # nvim-dap debugging
+│       ├── file-explorer.lua   # mini.files
+│       ├── formatting.lua      # conform.nvim
+│       ├── git.lua             # gitsigns, fugitive, rhubarb, blame
+│       ├── glance.lua          # LSP peek windows
+│       ├── local-fim.lua       # Local fill-in-the-middle completion
+│       ├── lsp.lua             # nvim-lspconfig + Mason
+│       ├── rails.lua           # vim-rails + vim-test
+│       ├── telescope.lua       # Fuzzy finder
+│       ├── toggleterm.lua      # Terminal management
+│       └── treesitter.lua      # Parsers + highlighting
+└── lazy-lock.json              # Plugin version lockfile (tracked)
 ```
+
+> **Not in this directory:** plugin source. lazy.nvim installs into
+> `~/.local/share/nvim/lazy/`, parsers into `~/.local/share/nvim/parser/`,
+> and Mason binaries into `~/.local/share/nvim/mason/bin/`. None of that is
+> version-controlled.
+
+## Requirements
+
+| Requirement | Why | Install |
+|---|---|---|
+| Neovim ≥ 0.10 | uses `vim.treesitter.foldexpr()` | — |
+| `git` | lazy.nvim bootstrap | system |
+| `tree-sitter` CLI | **compiles parsers** — without it, folding/indent/highlighting silently fail | `pacman -S tree-sitter-cli` / `brew install tree-sitter`, or let Mason install `tree-sitter-cli` |
+| `node` | LSP servers, prettier | system |
+| `rg`, `fd` | telescope | system |
+
+`tree-sitter` is a **build-time** dependency: the `main` branch of
+nvim-treesitter no longer ships prebuilt parsers, so it shells out to
+`tree-sitter build` on install/update. First launch after a fresh clone may
+race (parsers build before Mason finishes installing the CLI) — if folding
+looks dead, run `:MasonToolsInstall` then `:TSUpdate`.
 
 ## Key Features
 
-- **Modular Structure**: Each plugin category has its own file
-- **LSP Support**: Configured for TypeScript, PHP, Java, and Lua
-- **Git Integration**: Gitsigns and Fugitive for Git operations
-- **Fuzzy Finding**: Telescope for file/text searching
-- **Autocompletion**: Blink.cmp with LSP integration
-- **File Explorer**: Neo-tree for file navigation
-- **Auto-formatting**: Conform.nvim with project-aware prettier for TypeScript/JavaScript and ECS for PHP
+- **LSP**: vtsls (TS/JS), phpactor, ruby_lsp (mise/binstub aware), pyright, lua_ls
+- **Folding**: treesitter `foldexpr`, all folds open by default (`foldlevel=99`)
+- **Formatting**: conform.nvim, project-aware (prettier/prettierd, ecs, stylua, rubocop)
+- **Completion**: nvim-cmp + LuaSnip, plus local FIM (Tab / Shift-Tab)
+- **Debugging**: nvim-dap + dap-python + dap-view
+- **Git**: gitsigns, fugitive, rhubarb, blame.nvim
 
 ## Key Bindings
 
+Leader is `<Space>`.
+
 ### General
-- `<Space>` - Leader key
-- `<Esc>` - Clear search highlights
-- `<Esc><Esc>` - Exit terminal mode (in terminal)
+| Key | Action |
+|---|---|
+| `<Esc>` | Clear search highlights |
+| `<Esc><Esc>` (terminal) | Exit terminal mode |
+| `<leader>d` | Diagnostic float |
+| `<leader>tf` | Toggle format-on-save |
 
-### File Navigation
-- `\` - Toggle Neo-tree file explorer
-
-### Telescope (Fuzzy Finder)
-- `<leader>sf` - Find git files
-- `<leader>sr` - Find all files
-- `<leader>sg` - Live grep
-- `<leader>sb` - Browse buffers
-- `<leader>sh` - Help tags
-- `<leader>st` - Treesitter symbols
-- `<leader>s.` - Recently opened files
-- `<leader>ps` - Grep with prompt
+### Files & Search
+| Key | Action |
+|---|---|
+| `\` | Toggle mini.files |
+| `<leader>sf` | Find git files |
+| `<leader>sr` | Find all files |
+| `<leader>sg` | Live grep |
+| `<leader>ps` | Grep with prompt |
+| `<leader>pf` | Grep with regex + glob filter |
+| `<leader>sb` | Buffers |
+| `<leader>sh` | Help tags |
+| `<leader>st` | Treesitter symbols |
+| `<leader>s.` | Recent files |
 
 ### LSP
-- `grn` - Rename symbol
-- `gra` - Code action
-- `gr` - Go to references
-- `gi` - Go to implementation
-- `gd` - Go to definition
-- `gD` - Go to declaration
-- `gO` - Document symbols
-- `gW` - Workspace symbols
-- `grt` - Go to type definition
-- `<leader>th` - Toggle inlay hints
+| Key | Action |
+|---|---|
+| `gd` / `gD` | Definition / declaration |
+| `gr` | References |
+| `gi` | Implementation |
+| `gO` / `gW` | Document / workspace symbols |
+| `grt` | Type definition |
+| `grn` | Rename |
+| `gra` | Code action |
+| `gpd` / `gpr` / `gpt` / `gpi` | Glance peek (def/ref/type/impl) |
+| `<leader>th` | Toggle inlay hints |
+
+### Git
+| Key | Action |
+|---|---|
+| `<leader>gb` | Toggle blame |
+
+### Terminal
+| Key | Action |
+|---|---|
+| `<leader>tt` / `<leader>t1` | Terminal 1 |
+| `<leader>t2` / `<leader>t3` | Terminals 2 / 3 |
+| `<C-h/j/k/l>` (in terminal) | Move window |
+
+### Debugging
+| Key | Action |
+|---|---|
+| `<leader>dc` / `<F6>` | Continue |
+| `<leader>dn` / `<F7>` | Step over |
+| `<leader>di` / `<F8>` | Step into |
+| `<leader>do` / `dt` / `db` | Step out / terminate / breakpoint |
+| `<leader>du` / `dr` | Toggle dap-view / REPL |
 
 ### Formatting
-- `<leader>f` - Format current buffer (respects project prettier config)
-- `<leader>tf` - Toggle format on save (globally)
-- Auto-format on save enabled by default
+| Key | Action |
+|---|---|
+| `<leader>f` | Format buffer (n/v mode) |
 
-## Adding New Plugins
+Format-on-save is **on by default**; toggle with `<leader>tf`.
 
-1. Create a new file in `lua/plugins/` (e.g., `my-plugin.lua`)
-2. Return a table with plugin specifications:
+## Adding a Plugin
+
+Create `lua/plugins/<name>.lua` returning a lazy.nvim spec:
 
 ```lua
 return {
-  {
-    'author/plugin-name',
-    config = function()
-      -- Plugin configuration
-    end,
-  },
+  'author/plugin-name',
+  event = 'VeryLazy',        -- or ft=, cmd=, keys=
+  opts = {},
 }
 ```
 
-3. Restart Neovim - lazy.nvim will automatically load the new plugin
-
-## Customization
-
-- **Options**: Edit `lua/emchap4/options.lua`
-- **Keymaps**: Edit `lua/emchap4/keymaps.lua`
-- **Plugins**: Edit files in `lua/plugins/`
+Restart — lazy.nvim picks it up. Update `lazy-lock.json` via `:Lazy sync`.
 
 ## Managing Plugins
 
-- `:Lazy` - Open lazy.nvim UI
-- `:Lazy update` - Update all plugins
-- `:Lazy sync` - Install missing and update plugins
-- `:Mason` - Manage LSP servers, formatters, and linters
-
-## Formatting Setup
-
-The configuration uses `conform.nvim` for code formatting with the following features:
-
-### Automatic Project Detection
-- **TypeScript/JavaScript**: Automatically finds and uses `.prettierrc`, `prettier.config.js` from your project root (DSE, Frontend)
-- **PHP**: Uses ECS (Easy Coding Standard) from WFE `vendor/bin/ecs`, falls back to `php-cs-fixer`
-- **Lua**: Uses `stylua`
-
-### Format on Save
-Format on save is enabled by default. The formatter will:
-1. Look for project-specific prettier config in your repo (DSE, Frontend, etc.)
-2. Use that config for formatting
-3. Fall back to LSP formatting if no formatter is configured
-
-### Manual Formatting
-Press `<leader>f` in normal or visual mode to format the current buffer or selection.
-
-### Required Tools
-Formatters are already installed:
-- ✅ **Prettier**: Installed globally via `npm install -g prettier`
-- ✅ **Node.js PATH**: Automatically configured via `lua/emchap4/env.lua`
-- **PHP formatter**: Uses project-local `php-cs-fixer` or falls back to LSP
-- **Lua formatter**: Auto-installed via Mason (stylua)
-
-If you need to reinstall prettier:
-```bash
-# Use the node version for your project
-nvm use 18  # For frontend
-npm install -g prettier
-
-# Or for DSE
-nvm use 14
-npm install -g prettier
-```
-
-### Toggling Format on Save
-To toggle format on save globally, press `<leader>tf`.
-
-Alternatively, you can disable it via commands:
-```vim
-" Disable globally
-:lua vim.g.disable_autoformat = true
-
-" Disable for current buffer only
-:lua vim.b.disable_autoformat = true
-
-" Re-enable
-:lua vim.g.disable_autoformat = false
-```
+| Command | Purpose |
+|---|---|
+| `:Lazy` | Plugin UI |
+| `:Lazy sync` | Install missing + update |
+| `:Lazy update` | Update all |
+| `:Mason` | LSP servers / formatters / linters |
+| `:MasonToolsInstall` | Install everything named in `lsp.lua` |
+| `:TSUpdate` | Rebuild treesitter parsers |
+| `:checkhealth` | Diagnose |
