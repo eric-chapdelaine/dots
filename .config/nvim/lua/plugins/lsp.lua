@@ -10,7 +10,7 @@ return {
 			-- Useful status updates for LSP
 			{ "j-hui/fidget.nvim", opts = {} },
 
-			-- Completion capabilities
+			-- LSP capabilities for nvim-cmp (see completion.lua)
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
@@ -157,6 +157,42 @@ return {
 			local servers = {
 				vtsls = {},
 				phpactor = {},
+				ruby_lsp = {
+					cmd = function(dispatchers, config)
+						local root = config.root_dir
+						local command
+						if root and vim.fn.executable(root .. '/bin/ruby-lsp') == 1 then
+							command = { root .. '/bin/ruby-lsp' }
+						else
+							-- Use mise exec so the correct mise-managed Ruby runs.
+							-- Resolve mise portably (Homebrew on macOS, PATH elsewhere).
+							local mise = vim.fn.exepath('mise')
+							if mise == '' then
+								mise = '/opt/homebrew/bin/mise'
+							end
+							command = { mise, 'exec', '--', 'ruby-lsp' }
+						end
+						-- Point bundler at the standalone .ruby-lsp/Gemfile so ruby-lsp
+						-- doesn't try to load the full project bundle (which requires
+						-- private gems only available inside Docker).
+						local env = nil
+						if root then
+							local lsp_gemfile = root .. '/.ruby-lsp/Gemfile'
+							if vim.fn.filereadable(lsp_gemfile) == 1 then
+								env = { BUNDLE_GEMFILE = lsp_gemfile }
+							end
+						end
+						return vim.lsp.rpc.start(
+							command,
+							dispatchers,
+							{ cwd = root, env = env }
+						)
+					end,
+					init_options = {
+						formatter = 'none',
+						linters = {},
+					},
+				},
 				-- java_language_server = {
 				-- 	cmd = { "/Users/ec825m/.local/share/nvim/mason/bin/java-language-server" },
 				-- 	init_options = {
@@ -212,7 +248,9 @@ return {
 			--    :Mason
 			local ensure_installed = vim.tbl_keys(servers or {})
 			vim.list_extend(ensure_installed, {
-				"stylua", -- Used to format Lua code
+				"stylua",
+				"prettierd",
+				"tree-sitter-cli", -- required by nvim-treesitter (main) to build parsers
 			})
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 		end,

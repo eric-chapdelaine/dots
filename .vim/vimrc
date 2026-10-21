@@ -86,8 +86,8 @@ call plug#end()
 
 let g:ackprg = 'ag -U --path-to-ignore ~/.ignore --nogroup --nocolor --column'
  
-let g:copilot_node_command =
-        \ "~/.nvm/versions/node/v18.20.4/bin/node"
+" let g:copilot_node_command =
+"         \ "~/.nvm/versions/node/v18.20.4/bin/node"
 
 " Auto update on file change
 

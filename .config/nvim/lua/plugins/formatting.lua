@@ -7,7 +7,7 @@ return {
       {
         '<leader>f',
         function()
-          require('conform').format({ async = true, lsp_fallback = true })
+          require('conform').format({ async = true, lsp_format = 'never' })
         end,
         mode = '',
         desc = 'Format buffer',
@@ -17,24 +17,28 @@ return {
       -- Define formatters by filetype
       formatters_by_ft = {
         -- TypeScript/JavaScript - use prettier from project
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettier', 'prettierd', stop_after_first = true },
+        typescriptreact = { 'prettier', 'prettierd', stop_after_first = true },
+        javascript = { 'prettier', 'prettierd', stop_after_first = true },
+        javascriptreact = { 'prettier', 'prettierd', stop_after_first = true },
         
         -- Other web formats
-        json = { 'prettierd', 'prettier', stop_after_first = true },
-        yaml = { 'prettierd', 'prettier', stop_after_first = true },
-        markdown = { 'prettierd', 'prettier', stop_after_first = true },
-        html = { 'prettierd', 'prettier', stop_after_first = true },
-        css = { 'prettierd', 'prettier', stop_after_first = true },
-        scss = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettier', 'prettierd', stop_after_first = true },
+        yaml = { 'prettier', 'prettierd', stop_after_first = true },
+        markdown = { 'prettier', 'prettierd', stop_after_first = true },
+        html = { 'prettier', 'prettierd', stop_after_first = true },
+        css = { 'prettier', 'prettierd', stop_after_first = true },
+        scss = { 'prettier', 'prettierd', stop_after_first = true },
         
         -- PHP - use ECS (Easy Coding Standard) for WFE, fall back to php-cs-fixer
         php = { 'ecs', 'php_cs_fixer', stop_after_first = true },
         
         -- Lua
         lua = { 'stylua' },
+
+        -- Ruby / Rails (RuboCop via bundle)
+        ruby = { 'rubocop', lsp_format = false },
+        eruby = { 'rubocop', lsp_format = false },
       },
       
       -- Format on save
@@ -43,16 +47,20 @@ return {
         if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
           return
         end
-        
-        -- Disable format on save for certain filetypes
-        local disable_filetypes = { c = true, cpp = true, yaml = true }
-        if disable_filetypes[vim.bo[bufnr].filetype] then
+
+        local ft = vim.bo[bufnr].filetype
+        if ft == 'c' or ft == 'cpp' or ft == 'markdown' or ft:find('yaml', 1, true) then
           return
         end
-        
+
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        if bufname:match('%.ya?ml$') or bufname:match('%.md$') then
+          return
+        end
+
         return {
           timeout_ms = 1000,
-          lsp_fallback = true,
+          lsp_format = 'never',
         }
       end,
       
@@ -93,6 +101,26 @@ return {
             '$FILENAME',
             '--rules=@PSR12',
           },
+          stdin = false,
+        },
+
+        rubocop = {
+          command = function()
+            local root = vim.fs.dirname(vim.fs.find({
+              'Gemfile',
+              '.rubocop.yml',
+            }, { upward = true })[1])
+
+            if root then
+              local bundle_rubocop = root .. '/bin/rubocop'
+              if vim.fn.executable(bundle_rubocop) == 1 then
+                return bundle_rubocop
+              end
+            end
+
+            return 'rubocop'
+          end,
+          args = { '--autocorrect', '--stderr', '--stdout', '--display-cop-names', '--extra-details', '--format', 'simple', '$FILENAME' },
           stdin = false,
         },
       },

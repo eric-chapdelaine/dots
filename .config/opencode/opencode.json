@@ -30,6 +30,44 @@
       "type": "remote",
       "url": "http://127.0.0.1:3845/mcp",
       "enabled": true
+    },
+    "datadog": {
+      "type": "remote",
+      "url": "https://app.mintmcp.com/s/g_06B4geqJvwSnXvAXeaoZEF/mcp"
+    },
+    "snowflake": {
+      "type": "remote",
+      "url": "https://app.mintmcp.com/s/g_5p7ZEYG4iuMhd4nhCrgLnB/mcp"
+    },
+    "metabase": {
+      "type": "remote",
+      "url": "https://app.mintmcp.com/s/g_6NcVquHm8oyTDaJlrTuUKI/mcp"
+    },
+    "launchdarkly": {
+      "type": "remote",
+      "url": "https://app.mintmcp.com/s/g_1V0uw7wkif6sdGY0qlCwiU/mcp"
+    },
+    "notion": {
+      "type": "remote",
+      "url": "https://app.mintmcp.com/s/g_6VqocO4lm47Uu1YdeWkGT9/mcp"
     }
+  },
+  "plugin": [
+    "opencode-claude-auth@latest",
+    "openslimedit@latest",
+    "opencode-snip@latest"
+  ],
+  "agent": {
+    "explore": {
+      "model": "anthropic/claude-haiku-4-5"
+    }
+  },
+  "compaction": {
+    "auto": true,
+    "tail_turns": 3
+  },
+  "tool_output": {
+    "max_lines": 150,
+    "max_bytes": 6144
   }
 }

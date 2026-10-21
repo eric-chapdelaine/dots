@@ -6,22 +6,15 @@ This file is read first. For general coding/professional guidelines, also read `
 
 ## System Context
 
-| Property | Value |
-|---|---|
-| OS | Arch Linux (rolling) |
-| Kernel | Linux 7.0.8-arch1-1 x86_64 (PREEMPT_DYNAMIC) |
-| CPU | AMD Ryzen 5 PRO 8540U w/ Radeon 740M Graphics |
-| GPU | AMD/ATI HawkPoint2 (integrated) |
-| RAM | 14 GiB |
-| Disks | 58 GiB SSD (`/dev/sda`) + 476.9 GiB NVMe (`/dev/nvme0n1`) |
-| Display | X11 (`:0`), no Wayland compositor |
-| Init | systemd |
-| Shell | zsh |
-| Package Manager | Pacman v7.1.0 |
-| User | emchap4 |
-| Session | TTY |
+Hosts differ (Arch Linux/X11 workstation vs macOS). Detect the current host before relying on specifics:
 
-Key packages installed: `mesa`, `linux-firmware-amdgpu`, `linux-firmware-nvidia`
+```sh
+uname -s                       # Darwin | Linux
+echo "$XDG_SESSION_TYPE"       # x11 | wayland | tty
+command -v yabai || command -v i3
+```
+
+Do not hardcode absolute paths from one machine into shared config — branch on OS or use `$HOME`.
 
 ---
 
@@ -36,3 +29,37 @@ Key packages installed: `mesa`, `linux-firmware-amdgpu`, `linux-firmware-nvidia`
 4. **Use the professional guide as reference.** For general code style, debugging methodology, PR practices, and skill usage, follow `AGENTS-professional.md`. This file adds personal overrides only.
 
 5. **No unnecessary commentary.** Be concise. Answer the question, perform the task, then stop. No preambles, no summaries at the end unless asked.
+
+---
+
+## Session Discipline
+
+- **Secrets first.** Never print, commit, or send tokens, credentials, or PHI outside the machine. Deny `.env` reads; load secrets from `~/.config/secrets.sh` (untracked).
+- **Start fresh sessions** for new tasks rather than continuing long ones.
+- **Don't run specs or tests unless explicitly asked.** Make the change, describe what to verify, stop.
+- **If a tool or query fails twice, stop and report** — don't retry autonomously.
+- **Minimal changes.** Search all usages before changing shared code.
+
+---
+
+## Debugging Order
+
+1. **Read the code first.** Understand the code path. Most issues are identifiable before looking at any data.
+2. **Logs and metrics.** Query logs, metrics, or events for evidence.
+3. **Database.** Use only if logs didn't have enough detail.
+
+---
+
+## Skills
+
+Load a skill when a task matches it. Tracked skills in this repo:
+
+- **create-pr** — Create a GitHub pull request from a description or ticket
+- **review-pr** — Review a GitHub pull request end-to-end
+- **macos-window-control** — Move, resize, and interact with macOS windows via AppleScript
+- **write-discovery** — Write a technical discovery document for a new feature
+
+Usage-specific skills (not tracked; live only on work machines):
+`run-repos-locally`, `workflow-storybook-testing`.
+
+Machine-local skills may also exist under `~/.pi/agent/skills/` (e.g. `llm-wiki`).

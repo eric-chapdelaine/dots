@@ -1,0 +1,29 @@
+# Nile-specific paths (not to be tracked)
+.config/opencode/skills/create-pr/SKILL.md
+.config/opencode/skills/run-repos-locally/SKILL.md
+.config/opencode/skills/workflow-storybook-testing/SKILL.md
+.Nile-Core/
+.NileWebApps/
+Nile-Core/
+NileWebApps/
+/opt/nile-core
+/opt/nile-webapps
+/agent/repos/Nile-Core/
+/agent/repos/NileWebApps/
+
+# --- Secrets: never track ---
+.config/gh/hosts.yml
+.config/secrets.sh
+*.pem
+.pi/agent/auth.json
+
+# --- Machine-specific runtime state ---
+.pi/agent/settings.json
+.pi/agent/models.json
+.pi/agent/models-store.json
+.pi/agent/sessions/
+.pi/agent/bin/
+.pi/agent/npm/
+
+# --- OS junk ---
+.DS_Store

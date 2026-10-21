@@ -27,3 +27,9 @@ vim.opt.fillchars = {
   diff = "╱",
   eob = " ",
 }
+
+-- Folding (treesitter-aware, all folds open by default)
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
