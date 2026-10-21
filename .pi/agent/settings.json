@@ -1,0 +1,21 @@
+{
+  "defaultModel": "claude-haiku-5-5",
+  "defaultProvider": "anthropic",
+  "lastChangelogVersion": "1.3.0",
+  "packages": [
+    "npm:@netandreus/pi-cursor-provider",
+    "npm:pi-web-search",
+    "../../flowmem",
+    "npm:billion-context",
+    "npm:pi-mcp-adapter",
+    "npm:pi-subagents"
+  ],
+  "theme": "dark",
+  "deviceId": "d8e98814-5cbe-46ff-bc71-28e9165f5636",
+  "extensions": [
+    "-builtin:mcp"
+  ],
+  "warnings": {
+    "anthropicExtraUsage": false
+  }
+}

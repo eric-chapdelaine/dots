@@ -1,0 +1,15 @@
+{
+  "providers": {
+    "llama-cpp": {
+      "baseUrl": "http://localhost:8080/v1",
+      "api": "openai-completions",
+      "apiKey": "none",
+      "models": [
+        {
+          "id": "unsloth/Qwen3.5-9B-GGUF:UD-Q4_K_XL"
+        }
+      ]
+    }
+  }
+}
+
