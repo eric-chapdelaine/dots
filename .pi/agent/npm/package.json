@@ -1,0 +1,11 @@
+{
+  "name": "pi-extensions",
+  "private": true,
+  "dependencies": {
+    "@netandreus/pi-cursor-provider": "^0.1.4",
+    "billion-context": "^0.1.202",
+    "pi-mcp-adapter": "^5.4.0",
+    "pi-subagents": "^0.79.2",
+    "pi-web-search": "^1.7.0"
+  }
+}
