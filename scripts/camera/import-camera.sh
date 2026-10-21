@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-HOME_DIR="/home/emchap4"
+HOME_DIR="${HOME:?HOME is not set}"
 
 DEV_NAME="/dev/$1"
 MOUNT_POINT="$HOME_DIR/rx100"
@@ -37,7 +37,7 @@ awk '/>f\+/{print $NF}' "$NEW_FILES_LOG" \
       cp "$JPEG_DEST/$file" "$TO_UPLOAD_DIR/$file"
     done
 
-    GPHOTOS_CLI_TOKENSTORE_KEY=$(cat /home/emchap4/scripts/camera/GPHOTOS_TOKENSTORE_KEY) /home/emchap4/.local/bin/gphotos-uploader-cli push --config /home/emchap4/.gphotos-uploader-cli
+    GPHOTOS_CLI_TOKENSTORE_KEY=$(cat "$HOME/scripts/camera/GPHOTOS_TOKENSTORE_KEY") "$HOME/.local/bin/gphotos-uploader-cli" push --config "$HOME/.gphotos-uploader-cli"
 
 echo "Camera import complete"
 
