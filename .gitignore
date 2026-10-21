@@ -1,29 +1,60 @@
-# Nile-specific paths (not to be tracked)
-.config/opencode/skills/create-pr/SKILL.md
-.config/opencode/skills/run-repos-locally/SKILL.md
-.config/opencode/skills/workflow-storybook-testing/SKILL.md
-.Nile-Core/
-.NileWebApps/
-Nile-Core/
-NileWebApps/
-/opt/nile-core
-/opt/nile-webapps
-/agent/repos/Nile-Core/
-/agent/repos/NileWebApps/
+# ─────────────────────────────────────────────────────────────
+# Dotfiles .gitignore
+#
+# yadm tracks files in $HOME, so this file sees the whole home
+# directory. Keep rules anchored and specific — an unanchored
+# pattern here can hide unrelated files.
+# ─────────────────────────────────────────────────────────────
 
 # --- Secrets: never track ---
 .config/gh/hosts.yml
 .config/secrets.sh
-*.pem
 .pi/agent/auth.json
+*.pem
+*.key
 
-# --- Machine-specific runtime state ---
+# --- Machine-specific pi runtime state ---
+# settings.json holds default provider/model + installed packages;
+# models.json holds local GGUF paths; sessions/ and bin/ are runtime.
 .pi/agent/settings.json
 .pi/agent/models.json
 .pi/agent/models-store.json
 .pi/agent/sessions/
 .pi/agent/bin/
-.pi/agent/npm/node_modules/
 
-# --- OS junk ---
-.DS_Store
+# --- Package managers ---
+# Declarative manifests (package.json) are tracked so the intended
+# extension set is versioned; resolved state/lockfiles are not.
+.pi/agent/npm/node_modules/
+.pi/agent/npm/package-lock.json
+.config/opencode/node_modules/
+.config/opencode/bun.lock
+.config/opencode/package-lock.json
+.config/opencode/package.json
+
+# --- Vendored third-party code ---
+# Plugin managers fetch these; do not commit them.
+.vim/autoload/plug.vim
+.vim/autoload/syntaxcomplete.vim
+.vim/plugged/
+.vim/bundle/
+.vim/pack/
+.config/nvim/pack/
+
+# --- Generated / nondeterministic state ---
+.config/configstore/
+Library/Caches/
+**/.DS_Store
+
+# --- Work-only skills (kept on disk, not published) ---
+.config/opencode/skills/create-pr/SKILL.md
+.config/opencode/skills/run-repos-locally/SKILL.md
+.config/opencode/skills/workflow-storybook-testing/SKILL.md
+
+# --- Work repos (Nile) ---
+.Nile-Core/
+.NileWebApps/
+/opt/nile-core
+/opt/nile-webapps
+/agent/repos/Nile-Core/
+/agent/repos/NileWebApps/
