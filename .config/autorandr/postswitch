@@ -23,4 +23,4 @@ echo "Autorandr switched to $AUTORANDR_CURRENT_PROFILE at $(date)" >> /tmp/autor
 sleep 1
 
 # Force the polybar launch
-/home/emchap4/.config/polybar/launch.sh >> /tmp/autorandr.log 2>&1
+"$HOME/.config/polybar/launch.sh" >> /tmp/autorandr.log 2>&1
