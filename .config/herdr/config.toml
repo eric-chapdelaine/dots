@@ -1,0 +1,122 @@
+onboarding = false
+# Herdr configuration — tuned for a pi-centric, multi-project workflow.
+# Validate with: herdr config check
+
+[terminal]
+# New tabs/workspaces default to the cwd you launched herdr from unless told otherwise.
+new_cwd = "follow"
+kitty_graphics = true
+
+[ui]
+# Keep a bit more sidebar room for long workspace/agent labels.
+sidebar_width = 30
+sidebar_min_width = 22
+sidebar_max_width = 40
+pane_scrollbars = true
+pane_gaps = true
+pane_outer_borders = true
+# Attention queue: most-recently-needy agent on top instead of grouped by space.
+agent_panel_sort = "priority"
+status_indicators = "symbols"
+# Highlight the focused pane's border without needing to hover.
+accent = "cyan"
+
+[ui.toast]
+# Desktop-style notifications when an agent finishes or needs input while you
+# are looking at a different workspace. "system" uses your OS notifier.
+delivery = "herdr"
+delay_seconds = 1
+
+[ui.sound]
+enabled = false
+
+[session]
+# After a server restart, bring pi (and other integrated agents) back into their
+# own native sessions instead of a bare shell.
+resume_agents_on_restore = true
+startup_per_agent_delay_ms = 150
+
+[experimental]
+# Keep some pane history across full server restarts so a detached pane does not
+# come back completely blank.
+pane_history = true
+
+[advanced]
+# 10 MB of scrollback per pane (matches the default; raised for long test runs).
+scrollback_limit_bytes = 20000000
+
+[keys]
+prefix = "ctrl+b"
+
+# tmux muscle-memory: vertical split is |, horizontal split is -, plus a few extras.
+split_vertical = "prefix+|"
+split_horizontal = "prefix+minus"
+toggle_sidebar = "prefix+b"
+new_tab = "prefix+c"
+previous_tab = "prefix+p"
+next_tab = "prefix+n"
+detach = "prefix+q"
+zoom = "prefix+z"
+close_pane = "prefix+x"
+
+# Direct chords (no prefix) so common moves work from inside pi without
+# escaping the agent's input handling.
+last_pane = "ctrl+alt+b"
+
+# Custom commands
+# ----------------
+# prefix+alt+g : lazygit in a session-modal popup (only if installed)
+[[keys.command]]
+key = "prefix+alt+g"
+type = "popup"
+command = "command -v lazygit >/dev/null 2>&1 && lazygit || echo 'lazygit not installed'"
+description = "lazygit popup"
+width = "90%"
+height = "90%"
+
+# prefix+alt+p : new workspace rooted at a directory chosen with fzf.
+# Must be a popup: fzf needs a visible terminal, and "shell" commands run detached.
+[[keys.command]]
+key = "prefix+alt+p"
+type = "popup"
+command = """
+dir=$(find "${WORKSPACE_ROOT:-$HOME}" -maxdepth 4 \\
+        -name node_modules -prune -o -name .git -prune -o -type d -print 2>/dev/null \\
+      | grep -vE '/\\.' | fzf --prompt='workspace cwd> ') || exit 0
+"$HERDR_BIN_PATH" workspace create --cwd "$dir" --label "$(basename "$dir")"
+"""
+description = "new workspace from fzf directory picker"
+width = "70%"
+height = "70%"
+
+# prefix+alt+i : split the current pane and run pi inside a Gondolin micro-VM.
+# Runs as a detached shell so the new pane is a real, persistent split instead of
+# a temporary popup that disappears when pi exits.
+[[keys.command]]
+key = "prefix+alt+i"
+type = "shell"
+command = """
+new=$("$HERDR_BIN_PATH" pane split --pane "$HERDR_ACTIVE_PANE_ID" --direction right --cwd "$HERDR_ACTIVE_PANE_CWD" --no-focus) || exit 0
+pane=$(printf '%s' "$new" | jq -r '.result.pane.pane_id') && \\
+  "$HERDR_BIN_PATH" pane run "$pane" "pig"
+"""
+description = "pi in Gondolin VM (current pane cwd)"
+
+# prefix+alt+t : throwaway shell scratch pane
+[[keys.command]]
+key = "prefix+alt+t"
+type = "pane"
+command = "$SHELL -l"
+description = "scratch shell"
+
+# prefix+alt+shift+i : same thing, but in its own workspace so the VM boundary
+# shows up as a separate space in the sidebar.
+[[keys.command]]
+key = "prefix+alt+shift+i"
+type = "shell"
+command = """
+new=$("$HERDR_BIN_PATH" workspace create --cwd "$HERDR_ACTIVE_PANE_CWD" --label "vm:$(basename "$HERDR_ACTIVE_PANE_CWD")" --no-focus) || exit 0
+pane=$(printf '%s' "$new" | jq -r '.result.root_pane.pane_id') && \
+  "$HERDR_BIN_PATH" pane run "$pane" "pig"
+"""
+description = "pi in Gondolin VM (own workspace)"
