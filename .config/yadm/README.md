@@ -74,6 +74,23 @@ Generated symlinks are auto-excluded from git status (`yadm.auto-exclude`).
 symlink ("Skipping alt … as X is a directory"). Use `yadm mv <dir> <dir>##os.X`
 to create an alternate — that moves the working tree correctly.
 
+### Caveat: app-managed config files
+
+iTerm2 and Ghostty rewrite their own config when you change a setting. The
+target path is a **symlink** to the tracked file, so changes are captured only
+if the app writes *through* the link. If an app replaces the link with a real
+file, the alternate silently desyncs (the tracked `##os.Darwin` file stops
+receiving edits). Detect it with:
+
+```sh
+ls -l ~/Library/Preferences/com.googlecode.iterm2.plist   # expect a symlink
+```
+
+If it became a regular file, copy your changes into the tracked file by hand
+and re-run `yadm alt`. Do **not** set `yadm.alt-copy true` — that makes the
+target a real copy, so app rewrites are never captured at all (verified: the
+tracked source stays at its original content and git reports nothing).
+
 ## What is deliberately NOT tracked
 
 | Path | Why |
