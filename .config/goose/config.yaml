@@ -1,0 +1,18 @@
+GOOSE_MODEL: allenporter/xlam:1b
+GOOSE_PROVIDER: ollama
+OLLAMA_HOST: localhost
+extensions:
+  computercontroller:
+    bundled: true
+    display_name: Computer Controller
+    enabled: true
+    name: computercontroller
+    timeout: 300
+    type: builtin
+  developer:
+    bundled: true
+    display_name: Developer Tools
+    enabled: true
+    name: developer
+    timeout: 300
+    type: builtin
