@@ -1,0 +1,18 @@
+[cursor]
+thickness = 0.05
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+[window]
+decorations = "full"
+opacity = 1.0

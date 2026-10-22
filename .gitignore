@@ -58,3 +58,10 @@ Library/Caches/
 /opt/***REDACTED***
 /agent/repos/***REDACTED***/
 /agent/repos/***REDACTED***/
+
+# --- Neomutt: local mail credentials ---
+.config/neomutt/secrets
+
+# --- rmview (reMarkable): SSH root password in cleartext ---
+.config/rmview.json
+.config/rmview_known_hosts

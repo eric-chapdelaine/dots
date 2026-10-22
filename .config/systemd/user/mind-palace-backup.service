@@ -1,0 +1,7 @@
+[Unit]
+Description=Pull Mind Palace database backup from the Pi
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/mind-palace-backups/pull-backup.sh
