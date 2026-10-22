@@ -9,7 +9,12 @@ case ":$PATH:" in
 esac
 
 # opencode (obsolete — pi coding agent is the current tool)
-[ -d "$HOME/.opencode/bin" ] && export PATH="$HOME/.opencode/bin:$PATH"
+if [ -d "$HOME/.opencode/bin" ]; then
+    case ":$PATH:" in
+        *":$HOME/.opencode/bin:"*) ;;
+        *) export PATH="$HOME/.opencode/bin:$PATH" ;;
+    esac
+fi
 
 ##################
 # Functions
