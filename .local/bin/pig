@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# pig - pi with Gondolin micro-VM tool isolation.
+#
+# Instead of running bash/read/write/edit/grep/find/ls on the host, pi executes
+# them inside a Gondolin micro-VM whose /workspace is a write-through mount of
+# the directory pi was started in.
+#
+# Usage:
+#   cd ~/code/project && pig
+#   pig -c                       # any normal pi flag is passed through
+#   GONDOLIN_VMM=krun pig        # use the libkrun backend instead of qemu
+#
+# Everything else (model, auth, sessions, extensions) is host pi, unchanged.
+set -euo pipefail
+
+GONDOLIN_EXT="${GONDOLIN_EXT:-$HOME/.pi/gondolin-ext}"
+
+if [[ ! -f "$GONDOLIN_EXT/index.ts" ]]; then
+	echo "pig: gondolin extension not found at $GONDOLIN_EXT" >&2
+	exit 1
+fi
+
+exec pi -e "$GONDOLIN_EXT" "$@"
