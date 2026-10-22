@@ -1,0 +1,11 @@
+[user]
+	email = emchap4@gmail.com
+	name = Eric Chapdelaine
+[pull]
+	rebase = false
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
