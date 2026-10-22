@@ -58,3 +58,10 @@ Library/Caches/
 /opt/nile-webapps
 /agent/repos/Nile-Core/
 /agent/repos/NileWebApps/
+
+# --- Neomutt: local mail credentials ---
+.config/neomutt/secrets
+
+# --- rmview (reMarkable): SSH root password in cleartext ---
+.config/rmview.json
+.config/rmview_known_hosts

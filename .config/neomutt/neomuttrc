@@ -1,0 +1,46 @@
+# ==========================================
+# GMAIL NEOMUTT CONFIGURATION
+# ==========================================
+
+# User Information
+set realname = "Eric Chapdelaine"
+set from = "emchap4@gmail.com"
+set use_from = yes
+
+# Connection Settings
+set imap_user = "emchap4@gmail.com"
+set imap_pass = ""   # set via ~/.config/secrets.sh (NOT tracked)
+set smtp_url = "smtps://emchap4@gmail.com@smtp.gmail.com:465/"
+set smtp_pass = ""   # set via ~/.config/secrets.sh (NOT tracked)
+
+# Remote Folders (Gmail Specific IMAP paths)
+set folder = "imaps://imap.gmail.com:993"
+set spoolfile = "+INBOX"
+set postponed = "+[Gmail]/Drafts"
+set trash = "+[Gmail]/Trash"
+
+# Don't save copies of sent mail locally (Gmail does this automatically on its server)
+unset record 
+
+# Caching for snappy performance
+set header_cache = "~/.cache/neomutt/headers"
+set message_cachedir = "~/.cache/neomutt/bodies"
+set certificate_file = "~/.config/neomutt/certificates"
+
+# General Preferences
+set editor = "nvim"       # Change to nano, vim, or your preferred terminal editor
+set mail_check = 60       # Poll for new mail every 60 seconds
+set timeout = 15          # Time out after 15 seconds of inactivity
+
+# Sort by date, and reverse it so newest is at the top
+set sort = date
+set sort_aux = reverse-date-received
+
+# ==========================================
+# LOCAL SECRETS — not tracked
+# ==========================================
+# ~/.config/neomutt/secrets holds imap_pass / smtp_pass and is gitignored.
+# Create it on a new machine with:
+#   set imap_pass = "<gmail app password>"
+#   set smtp_pass = "<gmail app password>"
+source ~/.config/neomutt/secrets
