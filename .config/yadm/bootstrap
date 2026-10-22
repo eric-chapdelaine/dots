@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# yadm bootstrap — run by `yadm clone` (prompted) or `yadm bootstrap`.
+# Installs what the tracked configs assume. Idempotent: safe to re-run.
+set -euo pipefail
+
+log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+warn() { printf '\033[1;33m!!\033[0m %s\n' "$*"; }
+
+OS="$(uname -s)"
+
+# ── Shared: installed by the platform package manager ────────────────────────
+pkgs_arch=(
+    git zsh tmux neovim
+    tree-sitter-cli        # REQUIRED: builds nvim-treesitter parsers.
+                           # Without it folding/highlighting silently fail.
+    ripgrep fd fzf the_silver_searcher
+    nodejs npm pnpm
+    github-cli
+    i3-wm polybar autorandr
+    lf maim
+    docker
+)
+pkgs_brew=(
+    git zsh tmux neovim tree-sitter
+    ripgrep fd fzf the-silver-searcher
+    node pnpm
+    gh
+    universal-ctags
+    mise
+)
+
+case "$OS" in
+Linux)
+    if command -v pacman >/dev/null 2>&1; then
+        log "pacman: installing packages"
+        sudo pacman -S --needed --noconfirm "${pkgs_arch[@]}"
+    else
+        warn "Not an Arch system — install manually: ${pkgs_arch[*]}"
+    fi
+    ;;
+Darwin)
+    if command -v brew >/dev/null 2>&1; then
+        log "brew: installing packages"
+        brew install "${pkgs_brew[@]}" || true
+        # macOS window management lives in .config/{yabai,skhd}##os.Darwin
+        brew install --cask ghostty 2>/dev/null || warn "ghostty: install manually"
+        brew tap koekeishiya/formulae 2>/dev/null || true
+        brew install koekeishiya/formulae/yabai koekeishiya/formulae/skhd 2>/dev/null \
+            || warn "yabai/skhd: install manually (both need sudoers setup)"
+    else
+        warn "Homebrew missing — install it first: https://brew.sh"
+        exit 1
+    fi
+    ;;
+*)
+    warn "Unsupported OS: $OS"
+    exit 1
+    ;;
+esac
+
+# ── Alternates ───────────────────────────────────────────────────────────────
+log "materialising yadm alternates"
+yadm alt || true
+
+# ── Neovim: parsers + LSP servers + formatters ───────────────────────────────
+# lazy.nvim bootstraps itself on first launch; Mason needs a real launch.
+if command -v nvim >/dev/null 2>&1; then
+    log "neovim: installing plugins, treesitter parsers, and Mason tools"
+    nvim --headless "+Lazy! sync" +qa 2>/dev/null || true
+    nvim --headless "+TSUpdate" +qa 2>/dev/null || true
+    nvim --headless "+MasonToolsInstall" +qa 2>/dev/null || true
+    if [ -d "$HOME/.local/share/nvim/parser" ]; then
+        log "parsers built: $(find "$HOME/.local/share/nvim/parser" -name '*.so' | wc -l | tr -d ' ')"
+    else
+        warn "no parsers built — check that 'tree-sitter' is on \$PATH, then :TSUpdate"
+    fi
+fi
+
+# ── tmux plugins ─────────────────────────────────────────────────────────────
+if [ -d "$HOME/.tmux/plugins/tpm" ]; then
+    log "tmux: installing plugins"
+    "$HOME/.tmux/plugins/tpm/bin/install_plugins" >/dev/null 2>&1 || true
+fi
+
+# ── Shell check ──────────────────────────────────────────────────────────────
+for f in "$HOME/.zshrc" "$HOME/.config/zsh/common.zsh"; do
+    [ -f "$f" ] && zsh -n "$f" || true
+done
+
+log "bootstrap complete"
+warn "Remaining manual steps:"
+cat <<'EOF'
+  - GitHub auth:      gh auth login
+  - pi provider keys: set in ~/.pi/agent/auth.json (never tracked)
+  - macOS only:       yabai/skhd need sudoers + Accessibility permissions
+  - Arch only:        autorandr profiles are machine-specific; run autorandr --save <name>
+EOF
