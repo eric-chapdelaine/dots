@@ -194,7 +194,7 @@ return {
 					},
 				},
 				-- java_language_server = {
-				-- 	cmd = { "/Users/ec825m/.local/share/nvim/mason/bin/java-language-server" },
+				-- 	cmd = { vim.fn.stdpath("data") .. "/mason/bin/java-language-server" },
 				-- 	init_options = {
 				-- 		extendedClientCapabilities = {
 				-- 			classFileContentsSupport = true,
