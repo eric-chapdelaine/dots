@@ -14,6 +14,7 @@ return {
         'diff',
         'dockerfile',
         'embedded_template',
+        'gitcommit',
         'html',
         'javascript',
         'json',
