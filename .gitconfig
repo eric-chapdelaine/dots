@@ -9,3 +9,18 @@
 [credential "https://gist.github.com"]
 	helper =
 	helper = !gh auth git-credential
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	line-numbers = true
+	side-by-side = false
+	syntax-theme = none
+	hyperlinks = true
+	hyperlinks-file-link-format = "file://{path}#L{line}"
+[merge]
+	conflictStyle = zdiff3
+[diff]
+	colorMoved = default
