@@ -12,4 +12,6 @@
 {% endif %}
 {% include "AGENTS.parts/60-skills.md" %}
 
+{% if yadm.os == "Linux" %}
 {% include "AGENTS.parts/walky-talky.md" %}
+{% endif %}
