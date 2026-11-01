@@ -1,0 +1,15 @@
+{% include "AGENTS.parts/00-intro.md" %}
+
+{% include "AGENTS.parts/10-permissions.md" %}
+
+{% if yadm.os == "Darwin" %}
+{% include "AGENTS.parts/work/30-data-access.md" %}
+
+{% include "AGENTS.parts/work/40-git-and-prs.md" %}
+
+{% include "AGENTS.parts/work/50-llm-wiki.md" %}
+
+{% endif %}
+{% include "AGENTS.parts/60-skills.md" %}
+
+{% include "AGENTS.parts/walky-talky.md" %}

@@ -1,71 +1,7 @@
-# Working with Eric
-
-I'm Eric. I value understanding and confidence over speed. Everything you return should be easy for me to review, and once I sign off it should be effortless to act on: a command to paste, a PR to merge, a message to send.
-
-## How to report
-
-- **Lead with the answer.** A 1–2 sentence tl;dr, then short sections or bullets. Expand only where I need to act or decide.
-- **Back every claim with evidence**, such as a file:line, a query and its result, a log line, or a PR. If you aren't sure, give your confidence and why. Don't guess silently.
-- **Plain language.** No internal shorthand or labels you invented (no "B1", "FE fix", "path A"). Define any domain term I might not know.
-- **Say what's unknown.** If you couldn't verify something, say so instead of leaving it out.
-- **Copy-pastable artifacts go in files** under `~/scratch/<topic>/`. That covers console scripts, SQL, Notion markdown and message drafts. Fill in real values; no placeholders.
-- **Queries must derive their results**, not hardcode IDs from your own analysis. I can't trust an LLM-produced list of UUIDs.
-- For anything I'll send to people (PR descriptions, GitHub or Roam replies, summaries), use the `communicate` skill.
-
-## Simplicity
-
-- Make the smallest change that fully solves the problem. Small PRs are easier to review.
-- Readable beats clever. Cut code, abstraction and bloat wherever you can.
-- Comments are 1–2 lines and say *why*. Never write history ("previously…", "this fixes…"); that belongs in the PR.
-- Don't over-test. Unit-test isolated logic; cover edge cases with local testing, not a pile of specs.
-- No temporary application-code changes for one-off work. Keep one-offs self-contained (for example, a rake task directory).
-- Before changing shared code, find every usage and reason about each one.
-- Keep docs in sync with behavior changes.
-
-## Permissions
-
-| Scope | Rule |
-|---|---|
-| Anything with no side effects (reading code, read-only CLI, MCP reads, web) | Do it. |
-| Local machine and the local app (Docker containers, local DB state, local files) | Do it. It exists for testing. Ask only if I said otherwise or it seems wise. |
-| AWS in any environment (staging, preprod, prod) | Read-only is always fine. **Any mutation needs my approval for that exact command, every time.** An earlier approval doesn't cover the next command. No deploys. |
-| Production or staging databases | Never write SQL against them. Schema changes go through migrations; data changes go through the console or a rake task (see below). |
-| Git and GitHub: commits, pushes, creating PRs (no draft needed), `gh stack` operations | Do it. Never push to `develop`/`main`; force-push only your own feature branches (`--force-with-lease`). Merging a PR needs my approval. |
-| PR descriptions | You may fix outdated or wrong content. **Always re-read the current body right before editing**; I edit in the GitHub UI and you must not overwrite my changes. |
-| GitHub comments from automated reviewers (Bugbot, security, privacy, code quality) | You may reply (one line) and resolve. `/run-e2e` comments are fine. |
-| GitHub comments from humans | Never reply. Propose wording for me. |
-| Any other external write (Linear, Notion, Zendesk, Roam, LaunchDarkly, Datadog, Stripe, etc.) | Ask first. |
-
-## Data access
-
-- **Production data:** the Metabase MCP, using **MBQL only** (no SQL through the MCP). Prefer it over Snowflake, which lags. Use it freely for root causes, code-flow checks, estimates and single values. We have a BAA with Anthropic, OpenAI and Datadog, so working with PHI is fine. Don't mask it.
-- **When the numbers matter:** write a SQL query for me to run in the Metabase UI. Use the MCP to shape it, and make it easy to read (CTEs, clear names, a one-line comment per step).
-- **Production Rails console:** when code, MCPs and data aren't enough, give me a script to run, saved to `~/scratch/<topic>/`.
-  - Read-only by default. Make it provably side-effect free: no saves, enqueues, callbacks, external API writes or `update_columns`.
-  - Small, low-risk mutations (for example, unblocking one patient) can be console scripts if I ask. Be defensive: guard the expected state, print before and after.
-  - Larger or higher-risk mutations go in a small PR with a rake task. Follow the prior art in `lib/tasks/one_time/` and `lib/tasks/backfill/`: dry run by default, `DRY_RUN=false EXPECTED_TOTAL=<n>` to apply, `TENANT=<slug>`, idempotent, and print the touched IDs for rollback.
-
-## Git and PRs
-
-- New work goes in a new worktree off freshly pulled `origin/develop` (Nile-Core) or `origin/main` (NileWebApps), under `~/worktrees-nile-core/` or `~/worktrees-nilewebapps/`. Other agents share the main checkouts.
-- Stacked PRs use `gh stack` (`init`, `add`, `submit`, `sync`, `rebase`), not raw git branch juggling.
-- Specs: don't run the full suite locally (it takes about 40 minutes); CI is the check. Running one targeted spec file, or new quick specs, is fine. Watch the runtime.
-- I often leave review comments as **unstaged changes** in the worktree. Read them as requests, address them, then drop the comment lines.
-- Skills: `create-pr`, `review-pr`, `babysit-pr`.
-
-## LLM wiki (Nile work only)
-
-For any Nile-Core or NileWebApps work, use the `llm-wiki` skill. Check the wiki before investigating, and update it as you go: findings, decisions, behavior changes, next steps. If something should be remembered, it goes in the wiki.
-
-## Skills
-
-- `communicate`: plain-language explanations and anything I'll send to people.
-- `create-pr`: build, test and describe a PR.
-- `review-pr`: review at a level of quick, standard or max.
-- `babysit-pr`: drive a PR to all-green CI on its own.
-- `on-call`: root-cause a reported issue and propose fixes.
-- `llm-wiki`: the persistent knowledge base.
-
+<!-- Generated by `collie skill print pi`, pasted here so that the template owns
+     the text. Regenerate with: collie skill print pi > AGENTS.parts/walky-talky.md
+     (then `yadm alt`). The `collie skill` uninstall record stops collie update
+     from writing the block into the generated AGENTS.md and silently losing it. -->
 <!-- collie:walky-talky v1 begin -->
 # Walky talky
 
@@ -127,7 +63,7 @@ as your operator does, or `who` lists another instance's panes.
 List who you can reach. When you pick an address yourself, copy it from this list. Do not invent one.
 
 ```bash
-/Users/emchap4/.local/bin/collie walky who
+{{ env.HOME }}/.local/bin/collie walky who
 ```
 
 ```text
@@ -150,13 +86,13 @@ minibuch/w11:p4#8h9h        minibuch  claude   walky-live             idle
 Send a message to one address. Only your operator may send to `all`.
 
 ```bash
-/Users/emchap4/.local/bin/collie walky send collie-04rj6a/w54:p1J#anx6 "Tests are green on fix-465. You can merge."
+{{ env.HOME }}/.local/bin/collie walky send collie-04rj6a/w54:p1J#anx6 "Tests are green on fix-465. You can merge."
 ```
 
 For a body with `$`, backticks, `!` or several lines, use single quotes or stdin. Stdin is safest.
 
 ```bash
-printf '%s' "$BODY" | /Users/emchap4/.local/bin/collie walky send collie-04rj6a/w54:p1J#anx6
+printf '%s' "$BODY" | {{ env.HOME }}/.local/bin/collie walky send collie-04rj6a/w54:p1J#anx6
 ```
 
 `send` waits up to 15 seconds for the receipt. If the message is not typed by then, it prints
@@ -167,25 +103,25 @@ A send to a pane that closed, whose id another pane took, is refused `pane repla
 
 After `send`, end your turn. Do not poll and do not sleep. The answer is typed into your pane as
 your next prompt, with `reply to <your id>` in its header. If your pane is busy, Collie queues or holds it
-until your turn ends. `/Users/emchap4/.local/bin/collie walky inbox` shows it too. `status` says only that your message was
+until your turn ends. `{{ env.HOME }}/.local/bin/collie walky inbox` shows it too. `status` says only that your message was
 typed. It does not say the other agent read or answered it.
 
 Answer a message by its id. The reply goes back to the sender.
 
 ```bash
-/Users/emchap4/.local/bin/collie walky reply wt_k3f9x2m8q1a0 "Merged. Thanks."
+{{ env.HOME }}/.local/bin/collie walky reply wt_k3f9x2m8q1a0 "Merged. Thanks."
 ```
 
 Read one message by its id. This is how you read the body of a message from another agent.
 
 ```bash
-/Users/emchap4/.local/bin/collie walky inbox wt_k3f9x2m8q1a0
+{{ env.HOME }}/.local/bin/collie walky inbox wt_k3f9x2m8q1a0
 ```
 
-`/Users/emchap4/.local/bin/collie walky inbox` with no id prints every unread message for your pane and marks them
+`{{ env.HOME }}/.local/bin/collie walky inbox` with no id prints every unread message for your pane and marks them
 read. This is also how you read one your screen refused.
 
-`/Users/emchap4/.local/bin/collie walky status wt_...` shows what became of a message you sent: "queued", "typed
+`{{ env.HOME }}/.local/bin/collie walky status wt_...` shows what became of a message you sent: "queued", "typed
 into the pane", "waiting in the inbox, not typed", "not sent" with the reason, or "may have
 arrived, will not be sent again". If a send says "waiting in the inbox", the other session stayed
 busy, or its box held a draft. Do not send it again. The message waits in its inbox. If it says "may have
