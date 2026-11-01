@@ -35,7 +35,13 @@ Files live at their real `$HOME` paths. The only directories that exist
 ├── bootstrap   # per-OS install, run by `yadm clone`/`yadm bootstrap`
 ├── README.md   # this file
 └── hooks/
-    └── post_pull   # warns when a pull deletes machine-specific files
+    ├── post_pull   # warns when a pull deletes machine-specific files
+    └── post_commit # regenerates template outputs (AGENTS.md)
+
+~/.pi/agent/
+├── AGENTS.md##template   # builds AGENTS.md; work sections only on macOS
+├── AGENTS.parts/         # the sections the template includes
+└── AGENTS.md             # GENERATED — ignored, never edit
 
 ~/.config/herdr/
 └── config.toml # tracked; session state, sockets, logs are ignored
@@ -55,6 +61,11 @@ Files live at their real `$HOME` paths. The only directories that exist
 
 `~/.zshrc` is a ~20-line entry point: prompt, `$EDITOR`, then sources
 `common.zsh` plus the one matching OS module.
+
+`~/.pi/agent/AGENTS.md` follows the same idea, but is generated rather than
+symlinked: `AGENTS.md##template` includes files from `AGENTS.parts/`, and
+`{% if yadm.os == "Darwin" %}` keeps the ***REDACTED*** work sections (data access, git
+and PRs, the LLM wiki) on the Mac only. Edit the parts, then `yadm alt`.
 
 > `~/README.md` is **not** part of this repo — it belongs to an unrelated
 > project. That is why the orientation doc lives here.
@@ -77,6 +88,19 @@ This is what keeps i3 off the Mac and yabai off the Arch box.
 
 Generated symlinks are auto-excluded from git status (`yadm.auto-exclude`).
 `yadm alt` runs automatically after clone/checkout.
+
+### Templates
+
+A file can also be a **template** instead of a copy or a link. Name it
+`foo##template` and yadm renders it through `awk` into `foo`: `{{ yadm.os }}`,
+`{{ yadm.hostname }}`, `{{ env.HOME }}`, `{% if yadm.os == "Darwin" %}` /
+`{% else %}` / `{% endif %}`, and `{% include "path" %}` (relative paths
+resolve next to the template). The output is a real file, so apps can rewrite
+it freely, and it is excluded from git status like any alt target.
+
+Only `AGENTS.md` uses this today. Commit does not trigger `alt`, so
+`~/.config/yadm/hooks/post_commit` re-runs it to keep the output from going
+stale.
 
 **Gotcha:** `yadm alt` refuses to replace an existing *real directory* with a
 symlink ("Skipping alt … as X is a directory"). Use `yadm mv <dir> <dir>##os.X`
@@ -108,6 +132,7 @@ tracked source stays at its original content and git reports nothing).
 | `.pi/agent/auth.json` | provider API keys |
 | `.pi/agent/settings.json` | per-machine default provider/model |
 | `.pi/agent/models.json` | per-machine local model paths |
+| `.pi/agent/AGENTS.md` | generated from `AGENTS.md##template` + `AGENTS.parts/` |
 | `.pi/agent/sessions/`, `bin/` | runtime state |
 | `.pi/agent/npm/package-lock.json` | churns on every extension update |
 | `.config/opencode/node_modules/`, lockfiles | resolved dependency state |
