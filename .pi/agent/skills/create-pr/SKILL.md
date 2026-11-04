@@ -21,9 +21,10 @@ description: Implement, verify and open a Nile-Core or NileWebApps pull request 
 ## 3. Verify it
 
 1. **Unit tests** for isolated logic only. Don't turn the spec suite into an edge-case catalog. Config-only changes (CODEOWNERS, copy) usually need no test.
-2. **Local end-to-end** for behavior and edge cases. Run the app locally (see `~/wiki/scripts/nile-worktree-stack.sh` and the `stack_up` tool), seed local DB states modeled on real production rows (Metabase MCP), exercise every changed path, and confirm the results in the DB, logs and UI (playwright-cli screenshots for frontend changes).
-3. **Specs:** run only new or targeted spec files, and only if they're quick. CI runs the full suite.
-4. **Review:** run the `review-pr` skill at `standard` (or the level I ask for) against your own diff, and fix what it finds.
+2. **Local end-to-end** for behavior and edge cases, run the way production runs it: a job through a real Sidekiq worker (`Sidekiq::Testing.disable!`, `perform_async`), a cron/rake/endpoint from its real entrypoint. Stand in for AWS locally (moto or LocalStack for S3, a small fake HTTP server for Lambda, via `AWS_ENDPOINT_URL_*`) with real data shapes; never call real AWS to test without my approval. Stubs in specs must return what the real call returns (check the source or run it once). Run the app locally (see `~/wiki/scripts/nile-worktree-stack.sh` and the `stack_up` tool), seed local DB states modeled on real production rows (Metabase MCP), exercise every changed path, and confirm the results in the DB, logs and UI (playwright-cli screenshots for frontend changes).
+3. **Infra changes (CDK, Lambda, Docker):** run the stack's jest tests and `cdk synth`, and run the container image locally on the target architecture. Diff the actual config before claiming it "matches" another.
+4. **Specs:** run only new or targeted spec files, and only if they're quick. CI runs the full suite.
+5. **Review:** run the `review-pr` skill at `standard` (or the level I ask for) against your own diff, and fix what it finds.
 
 ## 4. Describe it
 
@@ -33,7 +34,7 @@ Use the repo template (`pull_request_template.md` in Nile-Core, `.github/pull_re
 - **Solution:** the high-level behavior change in a few bullets. A mermaid diagram if a flow is easier to see than read.
   - **Callouts:** important implications, decisions with the reason why, risks, deploy or ordering requirements, and what's deliberately out of scope.
 - **Migration Risk / Feature Flag:** check the right box with a one-line reason.
-- **Testing:** what you verified and how (local scenarios, production-data checks, specs added). Say plainly what wasn't tested.
+- **Testing:** what you verified and how (local scenarios, production-data checks, specs added). Say plainly what wasn't tested (for example, a runtime you couldn't emulate) and propose a staging check for me to approve.
 - **Monitoring:** how we'll know it works after deploy.
 
 Leave out file tables, commit timelines, "addressed review comments" logs and implementation detail that belongs in code.
