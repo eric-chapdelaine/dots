@@ -5,6 +5,8 @@
 {% if yadm.os == "Darwin" %}
 {% include "AGENTS.parts/work/30-data-access.md" %}
 
+{% include "AGENTS.parts/work/35-local-verification.md" %}
+
 {% include "AGENTS.parts/work/40-git-and-prs.md" %}
 
 {% include "AGENTS.parts/work/50-llm-wiki.md" %}
