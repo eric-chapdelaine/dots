@@ -1,0 +1,29 @@
+require("hs.ipc") -- enables the `hs` command line tool
+
+-- Move each window to the other screen, so the two screens' windows trade places.
+local function swapMonitors()
+  local laptop, big
+  for _, s in ipairs(hs.screen.allScreens()) do
+    if s:name():find("Built%-in") then laptop = s else big = s end
+  end
+  if not laptop or not big then
+    hs.alert.show("Need two screens")
+    return
+  end
+
+  -- Collect both lists before moving anything, or the moved windows get moved back.
+  local function windowsOn(screen)
+    local out = {}
+    for _, w in ipairs(hs.window.visibleWindows()) do
+      if w:screen() == screen and w:isStandard() then table.insert(out, w) end
+    end
+    return out
+  end
+
+  local laptopWins, bigWins = windowsOn(laptop), windowsOn(big)
+  for _, w in ipairs(laptopWins) do w:moveToScreen(big) end
+  for _, w in ipairs(bigWins) do w:moveToScreen(laptop) end
+end
+
+hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "S", swapMonitors)
+hs.alert.show("Hammerspoon config loaded")
