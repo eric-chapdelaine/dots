@@ -1,7 +1,7 @@
 require("hs.ipc") -- enables the `hs` command line tool
 
--- Move each window to the other screen, so the two screens' windows trade places.
-local function swapMonitors()
+-- Swap the frontmost standard window on each screen. Windows behind it stay where they are.
+local function swapTopWindows()
   local laptop, big
   for _, s in ipairs(hs.screen.allScreens()) do
     if s:name():find("Built%-in") then laptop = s else big = s end
@@ -11,19 +11,18 @@ local function swapMonitors()
     return
   end
 
-  -- Collect both lists before moving anything, or the moved windows get moved back.
-  local function windowsOn(screen)
-    local out = {}
-    for _, w in ipairs(hs.window.visibleWindows()) do
-      if w:screen() == screen and w:isStandard() then table.insert(out, w) end
+  -- orderedWindows is front-to-back, so the first match per screen is its top window.
+  local function topWindowOn(screen)
+    for _, w in ipairs(hs.window.orderedWindows()) do
+      if w:screen() == screen and w:isStandard() and w:isVisible() then return w end
     end
-    return out
   end
 
-  local laptopWins, bigWins = windowsOn(laptop), windowsOn(big)
-  for _, w in ipairs(laptopWins) do w:moveToScreen(big) end
-  for _, w in ipairs(bigWins) do w:moveToScreen(laptop) end
+  -- Find both before moving, so the first move doesn't change the second lookup.
+  local laptopTop, bigTop = topWindowOn(laptop), topWindowOn(big)
+  if laptopTop then laptopTop:moveToScreen(big) end
+  if bigTop then bigTop:moveToScreen(laptop) end
 end
 
-hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "S", swapMonitors)
+hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "S", swapTopWindows)
 hs.alert.show("Hammerspoon config loaded")
