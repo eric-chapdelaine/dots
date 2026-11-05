@@ -1,0 +1,28 @@
+require("hs.ipc") -- enables the `hs` command line tool
+
+-- Swap the frontmost standard window on each screen. Windows behind it stay where they are.
+local function swapTopWindows()
+  local laptop, big
+  for _, s in ipairs(hs.screen.allScreens()) do
+    if s:name():find("Built%-in") then laptop = s else big = s end
+  end
+  if not laptop or not big then
+    hs.alert.show("Need two screens")
+    return
+  end
+
+  -- orderedWindows is front-to-back, so the first match per screen is its top window.
+  local function topWindowOn(screen)
+    for _, w in ipairs(hs.window.orderedWindows()) do
+      if w:screen() == screen and w:isStandard() and w:isVisible() then return w end
+    end
+  end
+
+  -- Find both before moving, so the first move doesn't change the second lookup.
+  local laptopTop, bigTop = topWindowOn(laptop), topWindowOn(big)
+  if laptopTop then laptopTop:moveToScreen(big) end
+  if bigTop then bigTop:moveToScreen(laptop) end
+end
+
+hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "S", swapTopWindows)
+hs.alert.show("Hammerspoon config loaded")
