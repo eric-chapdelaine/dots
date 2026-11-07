@@ -1,0 +1,12 @@
+[Unit]
+Description=Pause media when AirPods leave my ears
+After=pipewire.service wireplumber.service bluetooth.service
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/airpods-eardetect
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
