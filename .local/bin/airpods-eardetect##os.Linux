@@ -1,0 +1,211 @@
+#!/usr/bin/env python3
+"""Pause media when AirPods leave your ears, resume when both come back.
+
+Talks to the AirPods over the Apple Accessory Protocol (L2CAP PSM 0x1001) and
+drives players over MPRIS. No root, no BlueZ changes.
+
+The stem squeeze is a separate thing entirely -- BlueZ delivers it as a media key,
+so it is handled by media-key from an i3 binding, not here.
+
+Usage: airpods-eardetect [--dry-run] [--debug]
+"""
+
+import logging
+import socket
+import subprocess
+import sys
+import time
+
+import gi
+
+gi.require_version("Gio", "2.0")
+from gi.repository import Gio, GLib
+
+PSM = 0x1001
+AACP_UUID = "74ec2172-0bad-4d01-8f77-997b2be0722a"
+
+HANDSHAKE = bytes.fromhex("00000400010002000000000000000000")
+HANDSHAKE_ACK = bytes.fromhex("01000400")
+REQUEST_NOTIFICATIONS = bytes.fromhex("040004000f00ffffffffff")
+
+EAR_OPCODE = bytes.fromhex("040004000600")
+IN_EAR = 0x00
+
+log = logging.getLogger("eardetect")
+
+
+def talk(bus_type, name, path, interface, method, args=None, reply_type=None):
+    return Gio.bus_get_sync(bus_type).call_sync(
+        name if name else None,
+        path,
+        interface,
+        method,
+        args,
+        reply_type,
+        Gio.DBusCallFlags.NONE,
+        -1,
+        None,
+    )
+
+
+def find_airpods():
+    """Return (address, connected) of the paired AirPods, or (None, False)."""
+    objects = talk(
+        Gio.BusType.SYSTEM, "org.bluez", "/",
+        "org.freedesktop.DBus.ObjectManager", "GetManagedObjects", None,
+        GLib.VariantType.new("(a{oa{sa{sv}}})"),
+    ).unpack()[0]
+    for interfaces in objects.values():
+        device = interfaces.get("org.bluez.Device1")
+        if device and AACP_UUID in [str(u) for u in device.get("UUIDs", [])]:
+            return str(device["Address"]), bool(device["Connected"])
+    return None, False
+
+
+def airpods_are_default_sink(address):
+    """Only act when audio is actually going to the AirPods."""
+    name = "bluez_output." + address.upper().replace(":", "_")
+    sink = subprocess.run(
+        ["pactl", "get-default-sink"], capture_output=True, text=True
+    ).stdout.strip()
+    return sink.startswith(name)
+
+
+def mpris_players():
+    names = talk(
+        Gio.BusType.SESSION, "org.freedesktop.DBus", "/org/freedesktop/DBus",
+        "org.freedesktop.DBus", "ListNames", None,
+        GLib.VariantType.new("(as)"),
+    ).unpack()[0]
+    return [n for n in names if n.startswith("org.mpris.MediaPlayer2.")]
+
+
+def player_command(name, method):
+    talk(
+        Gio.BusType.SESSION, name, "/org/mpris/MediaPlayer2",
+        "org.mpris.MediaPlayer2.Player", method,
+    )
+
+
+def status(name):
+    return talk(
+        Gio.BusType.SESSION, name, "/org/mpris/MediaPlayer2",
+        "org.freedesktop.DBus.Properties", "Get",
+        GLib.Variant("(ss)", ("org.mpris.MediaPlayer2.Player", "PlaybackStatus")),
+        GLib.VariantType.new("(v)"),
+    ).unpack()[0]
+
+
+def pause_playing(address, quiet=False):
+    paused = []
+    for name in mpris_players():
+        try:
+            if status(name) == "Playing":
+                log.info("pause %s", name.replace("org.mpris.MediaPlayer2.", ""))
+                if not quiet:
+                    player_command(name, "Pause")
+                paused.append(name)
+        except GLib.Error as e:
+            log.debug("skip %s: %s", name, e)
+    return paused
+
+
+def resume(names):
+    for name in names:
+        try:
+            log.info("resume %s", name.replace("org.mpris.MediaPlayer2.", ""))
+            player_command(name, "Play")
+        except GLib.Error as e:
+            log.debug("could not resume %s: %s", name, e)
+
+
+def wait_for_ack(sock):
+    deadline = time.time() + 3
+    while time.time() < deadline:
+        try:
+            data = sock.recv(2048)
+        except socket.timeout:
+            continue
+        if data.startswith(HANDSHAKE_ACK):
+            return True
+    return False
+
+
+def run_session(address, state):
+    """One AACP connection. Returns when the AirPods drop it."""
+    sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_SEQPACKET, socket.BTPROTO_L2CAP)
+    sock.settimeout(1)
+    try:
+        sock.connect((address, PSM))
+        sock.send(HANDSHAKE)
+        if not wait_for_ack(sock):
+            log.debug("no handshake ack from %s", address)
+            return
+        log.info("AACP session open with %s", address)
+        sock.send(REQUEST_NOTIFICATIONS)
+
+        sock.settimeout(20)
+        while True:
+            try:
+                data = sock.recv(4096)
+            except socket.timeout:
+                continue
+            if not data:
+                return
+            if data.startswith(EAR_OPCODE) and len(data) >= 8:
+                handle_ear_state(data[6], data[7], address, state)
+    finally:
+        sock.close()
+
+
+def handle_ear_state(primary, secondary, address, state):
+    both_in = primary == IN_EAR and secondary == IN_EAR
+    log.debug("ear report: primary=%#04x secondary=%#04x", primary, secondary)
+    if both_in == state["both_in"]:
+        return
+    state["both_in"] = both_in
+
+    if both_in:
+        if state["paused_by_us"]:
+            resume(state["paused_by_us"])
+            state["paused_by_us"] = []
+        return
+
+    if not airpods_are_default_sink(address):
+        log.info("pod out of ear, but AirPods are not the output device")
+        return
+    state["paused_by_us"] = pause_playing(address, state["dry_run"])
+
+
+def main():
+    dry_run = "--dry-run" in sys.argv
+    logging.basicConfig(
+        level=logging.DEBUG if "--debug" in sys.argv else logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+    )
+    state = {"both_in": None, "paused_by_us": [], "dry_run": dry_run}
+    if dry_run:
+        log.info("dry run: nothing will actually be paused")
+
+    while True:
+        address, connected = find_airpods()
+        if not address:
+            log.warning("no AirPods paired; retrying in 10s")
+            time.sleep(10)
+            continue
+        if not connected:
+            if state["both_in"] is not None:
+                log.info("AirPods disconnected")
+            state["both_in"] = None
+            time.sleep(3)
+            continue
+        try:
+            run_session(address, state)
+        except OSError as e:
+            log.debug("AACP session ended: %s", e)
+        state["both_in"] = None
+        time.sleep(2)
+
+
+if __name__ == "__main__":
+    main()
