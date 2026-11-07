@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""Drive MPRIS players from a media key.
+
+Bluetooth remotes (the AirPods stem included) send AV/C panel buttons, and BlueZ
+delivers those through uinput as ordinary keyboard media keys -- it never calls a
+media player over D-Bus. So the fix for "my headset button does nothing" is a key
+binding, not a media player.
+
+Resume target is remembered in a state file: when nothing is playing, "play-pause"
+resumes the player it last paused rather than guessing (and possibly starting a
+paused video in a browser).
+"""
+
+import os
+import sys
+
+import gi
+
+gi.require_version("Gio", "2.0")
+from gi.repository import Gio, GLib
+
+STATE = os.path.expanduser("~/.cache/media-key/last-paused")
+
+
+def bus():
+    if bus.conn is None:
+        bus.conn = Gio.bus_get_sync(Gio.BusType.SESSION)
+    return bus.conn
+
+
+bus.conn = None
+
+
+def call(name, path, interface, method, args=None, reply_type=None):
+    # The connection is deliberately kept: a released Gio connection closes.
+    return bus().call_sync(name, path, interface, method, args, reply_type,
+                           Gio.DBusCallFlags.NONE, -1, None)
+
+
+def players():
+    names = call("org.freedesktop.DBus", "/org/freedesktop/DBus",
+                 "org.freedesktop.DBus", "ListNames", None,
+                 GLib.VariantType.new("(as)")).unpack()[0]
+    return [n for n in names if n.startswith("org.mpris.MediaPlayer2.")]
+
+
+def status(name):
+    return call(name, "/org/mpris/MediaPlayer2", "org.freedesktop.DBus.Properties",
+                "Get", GLib.Variant("(ss)", ("org.mpris.MediaPlayer2.Player",
+                                             "PlaybackStatus")),
+                GLib.VariantType.new("(v)")).unpack()[0]
+
+
+def command(name, method):
+    call(name, "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player", method)
+
+
+def playing():
+    found = []
+    for name in players():
+        try:
+            if status(name) == "Playing":
+                found.append(name)
+        except GLib.Error:
+            continue
+    return found
+
+
+def remember(name):
+    os.makedirs(os.path.dirname(STATE), exist_ok=True)
+    with open(STATE, "w") as f:
+        f.write(name)
+
+
+def remembered():
+    try:
+        with open(STATE) as f:
+            name = f.read().strip()
+    except OSError:
+        return None
+    return name if name in players() else None
+
+
+def main():
+    action = sys.argv[1] if len(sys.argv) > 1 else "play-pause"
+
+    if action == "play-pause":
+        active = playing()
+        if active:
+            for name in active:
+                command(name, "Pause")
+            remember(active[0])
+            return
+        target = remembered() or (players()[:1] or [None])[0]
+        if target:
+            command(target, "Play")
+        return
+
+    method = {"next": "Next", "previous": "Previous"}.get(action)
+    if not method:
+        sys.exit(f"unknown action: {action}")
+    for name in (playing() or [remembered() or (players()[:1] or [None])[0]]):
+        if name:
+            command(name, method)
+
+
+if __name__ == "__main__":
+    main()
