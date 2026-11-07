@@ -83,6 +83,8 @@ This is what keeps i3 off the Mac and yabai off the Arch box.
 | `.config/autorandr##os.Linux/` | `.config/autorandr` | Arch |
 | `.local/bin/airpods-eardetect##os.Linux` | `.local/bin/airpods-eardetect` | Arch |
 | `.local/bin/media-key##os.Linux` | `.local/bin/media-key` | Arch |
+| `.config/rofi##os.Linux/` | `.config/rofi` | Arch |
+| `.local/bin/launcher##os.Linux` | `.local/bin/launcher` | Arch |
 | `.config/yabai##os.Darwin/` | `.config/yabai` | macOS |
 | `.config/skhd##os.Darwin/` | `.config/skhd` | macOS |
 | `Library/Application Support/com.mitchellh.ghostty/config##os.Darwin` | same path, no suffix | macOS |
@@ -188,6 +190,35 @@ press-timing debounce.
 The two halves are independent: stopping the ear-detection service keeps the stem
 working, and the stem needs no daemon at all — it is only a key binding. If
 Bluetooth is off, no key ever arrives.
+
+## Launcher (Arch only)
+
+`Super+space` opens a Spotlight-style panel. rofi's `drun` mode searches the
+installed `.desktop` entries; `Ctrl+Tab` swaps to `calc`, the rofi-calc plugin on
+top of libqalculate (the engine behind the `qalc` CLI), and `Ctrl+Enter` copies the
+current result to the clipboard. It took over the `focus mode_toggle` binding,
+which duplicated `Super+a`.
+
+| Path | What |
+|---|---|
+| `.config/rofi##os.Linux/config.rasi` | modes, fuzzy matching, panel theme |
+| `.local/bin/launcher##os.Linux` | what the i3 binding runs; carries both workarounds |
+| `.config/i3##os.Linux/config` | `bindsym $mod+space exec $HOME/.local/bin/launcher` |
+
+Two workarounds live in the wrapper rather than in `config.rasi`:
+
+- `-calc-command` has to be a command-line flag. rofi 2.0 does not apply plugin
+  options that sit in `config.rasi`; the same value there is silently ignored.
+- `LANG=C.UTF-8` is forced, because rofi exits immediately when it cannot set the
+  locale — which is what happens while a session asks for `en_US.UTF-8` but only
+  `C.utf8` was generated. After `sudo locale-gen`, the prefix can go.
+
+There is no single box for apps *and* maths: rofi's `combi` mode never calls
+rofi-calc's preprocess hook (svenstaro/rofi-calc#33, #140), so the two are one
+`Ctrl+Tab` apart.
+
+Write `to`, not `in`, for unit conversions: `in` is the inch symbol, so
+`5 km in miles` parses as a product instead of a conversion.
 
 ## What is deliberately NOT tracked
 

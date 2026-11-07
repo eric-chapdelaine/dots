@@ -17,6 +17,8 @@ pkgs_arch=(
     nodejs npm pnpm
     github-cli
     i3-wm polybar autorandr
+    rofi rofi-calc         # Super+space launcher; calc mode is libqalculate
+    xclip                  # the launcher copies results to the clipboard
     lf maim
     docker
     jq                     # herdr custom keybinds pipe JSON through jq

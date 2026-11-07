@@ -1,0 +1,126 @@
+/* Spotlight-style launcher for i3: Super+space for apps, Ctrl+Tab for math.
+   App search is rofi's drun mode; math comes from the rofi-calc plugin
+   (libqalculate, the engine behind the qalc CLI).
+   Ctrl+Enter copies a result: that command is set in ~/.local/bin/launcher,
+   because rofi 2.0 ignores plugin options living here. */
+
+configuration {
+  modi:                 "drun,calc";
+  show:                 "drun";
+  font:                 "Adwaita Sans 14";
+  matching:             "fuzzy";
+  sort:                 true;
+  case-smart:           true;
+  cycle:                true;
+  /* shrink the list to the number of matches instead of padding it out */
+  fixed-num-lines:      false;
+  /* rofi 2.0 only renders the mode switcher with this on. */
+  sidebar-mode:         true;
+  show-icons:           true;
+  drun-display-format:  "{name}";
+  terminal:             "alacritty";
+}
+
+/* rofi's default theme is Solarized Light; these variables replace it. */
+* {
+  background:                  rgba(28, 28, 30, 92%);
+  background-color:            transparent;
+  foreground:                  #e6e6ea;
+  border-color:                rgba(255, 255, 255, 12%);
+  separatorcolor:              rgba(255, 255, 255, 12%);
+  spacing:                     2;
+
+  normal-background:           transparent;
+  normal-foreground:           #e6e6ea;
+  alternate-normal-background: transparent;
+  alternate-normal-foreground: #e6e6ea;
+  selected-normal-background:  rgba(255, 255, 255, 14%);
+  selected-normal-foreground:  #ffffff;
+
+  active-background:           transparent;
+  active-foreground:           #7fb8ff;
+  alternate-active-background: transparent;
+  alternate-active-foreground: #7fb8ff;
+  selected-active-background:  rgba(255, 255, 255, 14%);
+  selected-active-foreground:  #ffffff;
+
+  urgent-background:           transparent;
+  urgent-foreground:           #ff6b6b;
+  alternate-urgent-background: transparent;
+  alternate-urgent-foreground: #ff6b6b;
+  selected-urgent-background:  rgba(255, 255, 255, 14%);
+  selected-urgent-foreground:  #ffffff;
+}
+
+window {
+  width:         45%;
+  border-radius: 14px;
+  padding:       10px;
+  border:        1px;
+}
+
+mainbox {
+  padding: 0;
+  border:  0;
+}
+
+inputbar {
+  padding:          6px 8px 10px;
+  spacing:          10px;
+  background-color: transparent;
+  border:           0;
+}
+
+prompt {
+  text-color: rgba(255, 255, 255, 50%);
+}
+
+entry {
+  text-color:        #ffffff;
+  placeholder-color: rgba(255, 255, 255, 30%);
+}
+
+listview {
+  lines:            10;
+  columns:          1;
+  background-color: transparent;
+  border:           0;
+  scrollbar:        false;
+  padding:          2px 0 0;
+}
+
+element {
+  padding:       8px 10px;
+  border-radius: 8px;
+  spacing:       10px;
+}
+
+element-icon {
+  size:             1.6em;
+  background-color: transparent;
+}
+
+
+element-text {
+  highlight: bold #7fb8ff;
+}
+
+mode-switcher {
+  padding:          6px 0 0;
+  spacing:          6px;
+  background-color: transparent;
+  border:           0;
+}
+
+button {
+  padding:          3px 12px;
+  border-radius:    7px;
+  background-color: transparent;
+  text-color:       rgba(255, 255, 255, 45%);
+  expand:           false;
+}
+
+button selected {
+  background-color: rgba(255, 255, 255, 14%);
+  text-color:       #ffffff;
+}

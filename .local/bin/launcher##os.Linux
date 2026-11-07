@@ -1,0 +1,7 @@
+#!/bin/sh
+# Spotlight-style launcher: applications first, Ctrl+Tab for the calculator.
+# rofi 2.0 ignores plugin options in config.rasi, so calc-command is passed here.
+# LANG is forced because the session's en_US.UTF-8 locale is not generated and
+# rofi quits on startup when it cannot set the locale.
+exec env LANG=C.UTF-8 rofi -show drun \
+  -calc-command "printf '%s' '{result}' | xclip -selection clipboard"
