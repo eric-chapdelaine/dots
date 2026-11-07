@@ -9,6 +9,9 @@ binding, not a media player.
 Resume target is remembered in a state file: when nothing is playing, "play-pause"
 resumes the player it last paused rather than guessing (and possibly starting a
 paused video in a browser).
+
+Usage: media-key [play-pause|next|previous]   (default: play-pause)
+See also: airpods-eardetect, the daemon that handles the ear sensors.
 """
 
 import os

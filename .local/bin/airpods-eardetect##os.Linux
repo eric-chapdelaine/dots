@@ -3,6 +3,11 @@
 
 Talks to the AirPods over the Apple Accessory Protocol (L2CAP PSM 0x1001) and
 drives players over MPRIS. No root, no BlueZ changes.
+
+The stem squeeze is a separate thing entirely -- BlueZ delivers it as a media key,
+so it is handled by media-key from an i3 binding, not here.
+
+Usage: airpods-eardetect [--dry-run] [--debug]
 """
 
 import logging

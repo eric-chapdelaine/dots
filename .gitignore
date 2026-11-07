@@ -91,3 +91,8 @@ Library/Caches/
 # --- rmview (reMarkable): SSH root password in cleartext ---
 .config/rmview.json
 .config/rmview_known_hosts
+
+# --- AirPods stem press ---
+# media-key records which player it paused so a second squeeze resumes that one.
+# Machine-local playback state, not configuration.
+.cache/media-key/
