@@ -41,6 +41,14 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+# AirPods stem and other headset buttons. BlueZ turns their AV/C buttons into
+# ordinary media keys via uinput, so without a binding they go to the focused
+# window instead of the music player.
+bindsym XF86AudioPlay exec --no-startup-id $HOME/.local/bin/media-key play-pause
+bindsym XF86AudioPause exec --no-startup-id $HOME/.local/bin/media-key play-pause
+bindsym XF86AudioNext exec --no-startup-id $HOME/.local/bin/media-key next
+bindsym XF86AudioPrev exec --no-startup-id $HOME/.local/bin/media-key previous
+
 # Screen brightness: F5 = down, F6 = up (via systemd-logind, no root needed).
 # Also bind the dedicated brightness keysyms so the Fn brightness keys work too.
 bindsym F5 exec --no-startup-id $HOME/.local/bin/brightness down
