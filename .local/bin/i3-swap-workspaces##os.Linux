@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# i3-swap-workspaces - swap the visible workspaces of the two active outputs.
+#
+# Linux counterpart of the Hammerspoon ctrl+alt+cmd+S hotkey: the work on the
+# laptop screen and the work on the external screen trade places, along with
+# every window in each workspace.
+
+set -euo pipefail
+
+outputs=$(i3-msg -t get_outputs)
+
+# A disconnected output (xroot-0 and friends) must not be counted.
+mapfile -t active < <(jq -r '.[] | select(.active) | .name' <<<"$outputs")
+[[ ${#active[@]} -eq 2 ]] || exit 0
+
+left=${active[0]}
+right=${active[1]}
+ws_left=$(jq -r --arg o "$left" '.[] | select(.name == $o) | .current_workspace' <<<"$outputs")
+ws_right=$(jq -r --arg o "$right" '.[] | select(.name == $o) | .current_workspace' <<<"$outputs")
+[[ $ws_left != null && $ws_right != null ]] || exit 0
+
+# Keep keyboard focus on the same workspace, wherever it lands.
+focused=$(i3-msg -t get_workspaces | jq -r '.[] | select(.focused) | .name')
+
+i3-msg "workspace \"$ws_left\"; move workspace to output \"$right\"" >/dev/null
+i3-msg "workspace \"$ws_right\"; move workspace to output \"$left\"" >/dev/null
+i3-msg "workspace \"$focused\"" >/dev/null
