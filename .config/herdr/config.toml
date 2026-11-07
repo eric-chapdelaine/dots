@@ -59,6 +59,10 @@ detach = "prefix+q"
 zoom = "prefix+z"
 close_pane = "prefix+x"
 
+# Go To picker: panes, tabs and workspaces in one list, searchable, with
+# agent-state filters. prefix+a because that is what layer 3's A key sends.
+goto = ["prefix+g", "prefix+a"]
+
 # Direct chords (no prefix) so common moves work from inside pi without
 # escaping the agent's input handling.
 last_pane = "ctrl+alt+b"
