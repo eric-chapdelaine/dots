@@ -81,6 +81,7 @@ This is what keeps i3 off the Mac and yabai off the Arch box.
 | `.config/i3##os.Linux/` | `.config/i3` | Arch |
 | `.config/polybar##os.Linux/` | `.config/polybar` | Arch |
 | `.config/autorandr##os.Linux/` | `.config/autorandr` | Arch |
+| `.local/bin/airpods-eardetect##os.Linux` | `.local/bin/airpods-eardetect` | Arch |
 | `.config/yabai##os.Darwin/` | `.config/yabai` | macOS |
 | `.config/skhd##os.Darwin/` | `.config/skhd` | macOS |
 | `Library/Application Support/com.mitchellh.ghostty/config##os.Darwin` | same path, no suffix | macOS |
@@ -122,6 +123,32 @@ If it became a regular file, copy your changes into the tracked file by hand
 and re-run `yadm alt`. Do **not** set `yadm.alt-copy true` — that makes the
 target a real copy, so app rewrites are never captured at all (verified: the
 tracked source stays at its original content and git reports nothing).
+
+## AirPods ear detection (Arch only)
+
+Taking one AirPod out pauses media; putting both back in resumes it. The
+AirPods sense ear contact themselves and report it over Apple's Accessory
+Protocol (a raw L2CAP socket on PSM `0x1001`), so this needs no root and no
+BlueZ patches — the script reads that report and pauses over MPRIS.
+
+| Path | What |
+|---|---|
+| `.local/bin/airpods-eardetect##os.Linux` | the daemon; finds the AirPods by their AACP service UUID, not a hardcoded MAC |
+| `.config/systemd/user/airpods-eardetect.service` | user unit, `Restart=always`, reconnects after Bluetooth drops |
+
+The unit is tracked **without** an OS suffix on purpose. systemd will not load a
+unit whose symlink target is not a valid unit name, so `##os.Linux` there fails
+(verified: `systemd-analyze verify` → `points to … which is not a valid unit
+name`). A stray unit file on the Mac is inert, same as `mind-palace-backup`.
+
+It pauses only players that were `Playing`, resumes only the ones it paused, and
+only acts when the AirPods are the default sink — so a pod slipping out while
+you are on speakers does nothing. Enable once per machine:
+
+```sh
+systemctl --user enable --now airpods-eardetect.service
+journalctl --user -u airpods-eardetect -f   # watch pause/resume as you remove a pod
+```
 
 ## What is deliberately NOT tracked
 
