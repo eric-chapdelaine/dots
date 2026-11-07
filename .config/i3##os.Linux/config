@@ -48,6 +48,10 @@ bindsym F6 exec --no-startup-id $HOME/.local/bin/brightness up
 bindsym XF86MonBrightnessDown exec --no-startup-id $HOME/.local/bin/brightness down
 bindsym XF86MonBrightnessUp exec --no-startup-id $HOME/.local/bin/brightness up
 
+# Swap the workspaces on the laptop and external screens. Same key as the macOS
+# Hammerspoon hotkey, ctrl+alt+cmd+S, with Super standing in for cmd.
+bindsym Ctrl+Mod1+$mod+s exec --no-startup-id $HOME/.local/bin/i3-swap-workspaces
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
