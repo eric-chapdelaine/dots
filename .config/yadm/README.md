@@ -124,7 +124,9 @@ and re-run `yadm alt`. Do **not** set `yadm.alt-copy true` — that makes the
 target a real copy, so app rewrites are never captured at all (verified: the
 tracked source stays at its original content and git reports nothing).
 
-## AirPods ear detection (Arch only)
+## AirPods (Arch only)
+
+### Ear detection
 
 Taking one AirPod out pauses media; putting both back in resumes it. The
 AirPods sense ear contact themselves and report it over Apple's Accessory
@@ -149,6 +151,32 @@ you are on speakers does nothing. Enable once per machine:
 systemctl --user enable --now airpods-eardetect.service
 journalctl --user -u airpods-eardetect -f   # watch pause/resume as you remove a pod
 ```
+
+### Stem press (squeeze to pause)
+
+The stem does **not** arrive as AVRCP player traffic, so registering a media
+player with BlueZ does nothing for it. bluetoothd receives the AirPods' AV/C
+panel button and re-emits it through uinput as an ordinary media key, which then
+lands on whatever window has focus unless something binds it. Straight from
+`bluetoothd -d`:
+
+```
+profiles/audio/avctp.c:handle_panel_passthrough() AV/C: PLAY pressed
+src/shared/uinput.c:bt_uinput_send_key() 200        # 200 = KEY_PLAYCD
+```
+
+| Path | What |
+|---|---|
+| `.local/bin/media-key##os.Linux` | play-pause / next / previous over MPRIS |
+| `.config/i3##os.Linux/config` | binds `XF86AudioPlay`/`Pause`/`Next`/`Prev` to it |
+
+`media-key` pauses the player that is currently `Playing`, and when nothing is
+playing it resumes the one it paused last (kept in `~/.cache/media-key/last-paused`)
+— so a squeeze never starts an unrelated paused video in a browser.
+
+Single squeeze is all the AirPods send to Linux: a double squeeze arrives as two
+`PLAY` presses, so it toggles twice instead of skipping track. Skipping would need
+press-timing debounce.
 
 ## What is deliberately NOT tracked
 
