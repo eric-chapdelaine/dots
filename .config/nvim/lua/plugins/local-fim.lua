@@ -16,7 +16,7 @@ return {
       endpoint = "http://127.0.0.1:8012",
       profile = "qwen2.5-coder-1.5b",
       keymaps = {
-        trigger = "<C-G>",    -- Trigger completion with Ctrl+G
+        trigger = false,      -- Ctrl+G is mapped below so it can start the server first
         dismiss = false,      -- Disable dismiss keymap
         accept = false,       -- Disable built-in accept (conflicts with cmp)
       },
@@ -38,8 +38,65 @@ return {
       },
     })
 
-    -- Ensure the llama-server is running
-    require("local-fim.server").ensure(fim.config)
+    -- Start llama-server on demand instead of at VimEnter, so the confirm
+    -- popup only appears when a completion is actually requested.
+    local server = require("local-fim.server")
+
+    local function server_up(cb)
+      vim.system(
+        { "curl", "-s", "--max-time", "1", fim.config.endpoint .. "/health" },
+        { text = true },
+        vim.schedule_wrap(function(res)
+          cb(res.code == 0 and res.stdout ~= nil and res.stdout ~= "")
+        end)
+      )
+    end
+
+    -- llama-server needs a moment to load the model; retry until it answers.
+    local function complete_when_ready(attempts)
+      server_up(function(up)
+        if up then
+          if vim.fn.mode():sub(1, 1) == "i" then
+            fim.complete()
+          end
+        elseif attempts > 0 then
+          vim.defer_fn(function()
+            complete_when_ready(attempts - 1)
+          end, 250)
+        else
+          vim.notify("local-fim: llama-server did not come up in time", vim.log.levels.WARN)
+        end
+      end)
+    end
+
+    local function trigger()
+      if vim.fn.executable("curl") == 0 then
+        fim.complete()
+        return
+      end
+      server_up(function(up)
+        if up then
+          fim.complete()
+          return
+        end
+        local choice = vim.fn.confirm(
+          ("local-fim: llama-server not running at %s.\nStart %s in the background?"):format(
+            fim.config.endpoint,
+            fim.config.profile
+          ),
+          "&Yes\n&No\n&Change profile",
+          1
+        )
+        if choice == 1 then
+          server.start(fim.config)
+          complete_when_ready(60) -- ~15s
+        elseif choice == 3 then
+          fim.choose_profile()
+        end
+      end)
+    end
+
+    vim.keymap.set("i", "<C-G>", trigger, { desc = "local-fim: start llama-server if needed, then complete" })
 
     -- Smart Tab: cmp (deterministic) > local-fim (LLM)
     local cmp = require("cmp")
