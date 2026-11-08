@@ -2,6 +2,10 @@
 
 {% include "AGENTS.parts/10-permissions.md" %}
 
+{% if yadm.os == "Linux" %}
+{% include "AGENTS.parts/20-web-search.md" %}
+
+{% endif %}
 {% if yadm.os == "Darwin" %}
 {% include "AGENTS.parts/work/30-data-access.md" %}
 

@@ -220,6 +220,20 @@ rofi-calc's preprocess hook (svenstaro/rofi-calc#33, #140), so the two are one
 Write `to`, not `in`, for unit conversions: `in` is the inch symbol, so
 `5 km in miles` parses as a product instead of a conversion.
 
+## Web search is a paid call (Arch only)
+
+`pi-web-search` is installed on both machines. One `web_search` is not one
+search: the extension sets `max_uses: 10`, so a call can run up to ten
+provider-side searches, and OpenRouter bills those at $7 per 1,000 ($0.007
+each) plus tokens. A three-sentence question measured 4 searches: $0.0295, of
+which $0.028 was fees. So a call is 2–4¢, and the fees dwarf the tokens.
+
+The control is instruction, not a gate: `.pi/agent/AGENTS.parts/20-web-search.md`
+is included from the template only on Linux, and tells the agent to reach for
+`curl` first, to give a labelled guess instead of a lookup, and to search only
+when a wrong answer would cost real time or money. The Mac reads every other
+section and keeps its current behaviour.
+
 ## What is deliberately NOT tracked
 
 | Path | Why |
