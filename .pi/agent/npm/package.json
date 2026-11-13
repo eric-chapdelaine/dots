@@ -3,8 +3,8 @@
   "private": true,
   "dependencies": {
     "@netandreus/pi-cursor-provider": "^0.1.4",
-    "pi-mcp-adapter": "^7.0.0",
-    "pi-subagents": "^0.84.0",
+    "pi-mcp-adapter": "^7.0.1",
+    "pi-subagents": "^0.86.0",
     "pi-vim": "^0.15.1",
     "pi-web-search": "^1.7.0"
   }
