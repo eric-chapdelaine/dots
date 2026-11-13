@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# wyadm - the private work dotfiles, as a second yadm instance over the same $HOME.
+#
+#   wyadm clone git@github.com:eric-chapdelaine/work-dots.git
+#   wyadm status | pull --ff-only | alt | add ~/.pi/agent/skills/on-call/SKILL.md
+#
+# Everything about this instance lives apart from `yadm`: config and bootstrap in
+# ~/.config/work-dots, git data in ~/.local/share/work-dots. The work-tree is $HOME
+# for both, so the two repos share files but never the same path.
+set -euo pipefail
+
+YADM_DIR="${WORK_DOTS_DIR:-$HOME/.config/work-dots}"
+YADM_DATA="${WORK_DOTS_DATA:-$HOME/.local/share/work-dots}"
+
+exec yadm -Y "$YADM_DIR" --yadm-data "$YADM_DATA" "$@"

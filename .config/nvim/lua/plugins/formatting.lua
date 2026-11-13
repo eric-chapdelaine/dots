@@ -30,15 +30,12 @@ return {
         css = { 'prettier', 'prettierd', stop_after_first = true },
         scss = { 'prettier', 'prettierd', stop_after_first = true },
         
-        -- PHP - use ***REDACTED*** (***REDACTED***) for WFE, fall back to php-cs-fixer
-        php = { '***REDACTED***', 'php_cs_fixer', stop_after_first = true },
+        -- PHP - php-cs-fixer
+        php = { 'php_cs_fixer', stop_after_first = true },
         
         -- Lua
         lua = { 'stylua' },
 
-        -- ***REDACTED*** / ***REDACTED*** (***REDACTED*** via bundle)
-        ***REDACTED*** = { '***REDACTED***', lsp_format = false },
-        ***REDACTED*** = { '***REDACTED***', lsp_format = false },
       },
       
       -- Format on save
@@ -71,28 +68,6 @@ return {
         -- Prettierd is faster but needs to be installed separately
         prettierd = {},
         
-        -- ***REDACTED*** (***REDACTED***) for WFE
-        ***REDACTED*** = {
-          command = function()
-            -- Try to find vendor/bin/***REDACTED*** in the project root
-            local root = vim.fs.dirname(vim.fs.find({ 
-              '***REDACTED***',
-              'composer.json',
-            }, { upward = true })[1])
-            
-            if root then
-              local ***REDACTED*** = root .. '/vendor/bin/***REDACTED***'
-              if vim.fn.executable(***REDACTED***) == 1 then
-                return ***REDACTED***
-              end
-            end
-            
-            -- Fall back to global ***REDACTED*** if available
-            return '***REDACTED***'
-          end,
-          args = { 'check', '--fix', '$FILENAME' },
-          stdin = false,
-        },
         
         php_cs_fixer = {
           command = 'php-cs-fixer',
@@ -104,25 +79,6 @@ return {
           stdin = false,
         },
 
-        ***REDACTED*** = {
-          command = function()
-            local root = vim.fs.dirname(vim.fs.find({
-              '***REDACTED***',
-              '.***REDACTED***.yml',
-            }, { upward = true })[1])
-
-            if root then
-              local ***REDACTED*** = root .. '/bin/***REDACTED***'
-              if vim.fn.executable(***REDACTED***) == 1 then
-                return ***REDACTED***
-              end
-            end
-
-            return '***REDACTED***'
-          end,
-          args = { '--autocorrect', '--stderr', '--stdout', '--display-cop-names', '--extra-details', '--format', 'simple', '$FILENAME' },
-          stdin = false,
-        },
       },
     },
   },

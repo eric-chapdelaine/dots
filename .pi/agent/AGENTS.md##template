@@ -2,22 +2,41 @@
 
 {% include "AGENTS.parts/10-permissions.md" %}
 
-{% if yadm.os == "Linux" %}
+{% if yadm.class == "work" %}
+{% include "AGENTS.parts/work/permissions.md" %}
+
+{% else %}
+{% include "AGENTS.parts/home/permissions.md" %}
+
+{% endif %}
+{% include "AGENTS.parts/35-local-verification.md" %}
+
+{% if yadm.class == "work" %}
+{% include "AGENTS.parts/work/verification.md" %}
+
+{% endif %}
+{% include "AGENTS.parts/40-git-and-prs.md" %}
+
+{% if yadm.class == "work" %}
+{% include "AGENTS.parts/work/git-and-prs.md" %}
+
+{% include "AGENTS.parts/work/data-access.md" %}
+
+{% include "AGENTS.parts/work/skill-specifics.md" %}
+
+{% endif %}
+{% if yadm.class != "work" %}
 {% include "AGENTS.parts/20-web-search.md" %}
 
 {% endif %}
-{% if yadm.os == "Darwin" %}
-{% include "AGENTS.parts/work/30-data-access.md" %}
+{% include "AGENTS.parts/45-subagents.md" %}
 
-{% include "AGENTS.parts/work/35-local-verification.md" %}
-
-{% include "AGENTS.parts/work/40-git-and-prs.md" %}
-
-{% include "AGENTS.parts/work/50-llm-wiki.md" %}
-
-{% endif %}
 {% include "AGENTS.parts/60-skills.md" %}
 
+{% if yadm.class == "work" %}
+{% include "AGENTS.parts/work/skills.md" %}
+
+{% endif %}
 {% if yadm.os == "Linux" %}
 {% include "AGENTS.parts/walky-talky.md" %}
 {% endif %}

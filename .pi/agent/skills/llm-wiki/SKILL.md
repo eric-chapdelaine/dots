@@ -1,6 +1,6 @@
 ---
 name: llm-wiki
-description: Persistent, compounding personal knowledge wiki at ~/wiki/wiki (issues, projects, codebase, entities, concepts, decisions) searched with qmd. Use at the start of any session and whenever investigating a bug, planning a project, recording architecture knowledge, ingesting a source from ~/wiki/raw, or linting the wiki.
+description: Persistent, compounding personal knowledge wiki at ~/wiki (issues, projects, codebase, entities, concepts, decisions) searched with qmd. Use at the start of any session and whenever investigating a bug, planning a project, recording architecture knowledge, ingesting a source from ~/wiki/raw, or linting the wiki.
 ---
 
 # Skill: llm-wiki
@@ -9,7 +9,7 @@ description: Persistent, compounding personal knowledge wiki at ~/wiki/wiki (iss
 
 The wiki is a persistent, compounding knowledge base at `~/wiki/wiki/`. It accumulates knowledge across sessions — investigations, codebase architecture, domain concepts, entity quirks, past decisions. Every session should leave the wiki richer than it found it.
 
-**Read the schema first**: `~/wiki/schema.md` — it defines page types, templates, operations, and conventions.
+**Read the schema first**: `~/wiki/schema.md` — it defines page types, templates, operations, and conventions. If `~/wiki` does not exist yet, tell me rather than inventing a schema.
 
 ---
 
@@ -42,17 +42,17 @@ The wiki is a persistent, compounding knowledge base at `~/wiki/wiki/`. It accum
 
 ## Searching
 
-qmd is installed at `~/.nvm/versions/node/v24.13.1/bin/qmd`.
+Use `qmd` from `PATH` (install it with `npm i -g @tobilu/qmd` if `command -v qmd` is empty).
 
 ```bash
 # Hybrid search (best)
-~/.nvm/versions/node/v24.13.1/bin/qmd query "DoseSpot ***REDACTED*** pricing" -c wiki
+qmd query "<topic>" -c wiki
 
 # Keyword search (fast)
-~/.nvm/versions/node/v24.13.1/bin/qmd search "lucy rx" -c wiki
+qmd search "<keyword>" -c wiki
 
 # Get a specific page
-~/.nvm/versions/node/v24.13.1/bin/qmd get "wiki/issues/lucy-rx-bugs.md"
+qmd get "wiki/issues/<page>.md"
 ```
 
 Or use the `qmd` MCP tool directly (tools: `query`, `get`, `multi_get`, `status`).
@@ -67,7 +67,7 @@ When working on a bug or feature:
 
 1. **Before any code**: Find or create the relevant `issues/` or `projects/` page.
 2. **Immediately after any new finding**: Update the page. Update the top summary and `updated` frontmatter.
-3. **When a finding reveals persistent codebase knowledge**: Write a `codebase/`, `concept/`, or `entity/` page for it. Don't bury architecture knowledge inside a single issue doc.
+3. **When a finding reveals persistent codebase knowledge**: Write a `codebase/`, `concept/` or `entity/` page for it. Don't bury architecture knowledge inside a single issue doc.
 4. **When done**: Set `status: resolved` or `status: done`. Update `index.md`.
 5. **Append to log.md**: `| YYYY-MM-DD | maintain | <title> | <what changed> |`
 

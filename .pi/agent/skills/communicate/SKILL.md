@@ -1,16 +1,16 @@
 ---
 name: communicate
-description: Explain a concept, flow, root cause or change at a high level in plain language, and draft anything Eric will send to others (PR descriptions, GitHub/***REDACTED*** replies, team summaries, ***REDACTED*** sections, customer comms). Use whenever the output is for understanding or for another person to read.
+description: Explain a concept, flow, root cause or change at a high level in plain language, and draft anything Eric will send to others (PR descriptions, GitHub replies, team summaries, docs sections, customer comms). Use whenever the output is for understanding or for another person to read.
 ---
 
 # Communicate
 
-The audience is me trying to understand something, or the people I'll forward it to: engineers, Ops, ***REDACTED***, PMs. Write so it can be read once and understood.
+The audience is me trying to understand something, or the people I'll forward it to: engineers, Ops, support, PMs. Write so it can be read once and understood.
 
 ## Rules
 
 - **tl;dr first:** 1–2 sentences that answer the question or name the problem.
-- **Plain language:** no method names, file paths, class names or internal codes unless the reader is an engineer and needs them. Describe what happens ("the order is never sent to the ***REDACTED***"), not how the code does it.
+- **Plain language:** no method names, file paths, class names or internal codes unless the reader is an engineer and needs them. Describe what happens ("the invoice is never sent to the customer"), not how the code does it.
 - **Customer-facing impact before mechanism.**
 - **Short:** short sections, bullets or numbered lists when there are parallel items. Cut anything the reader doesn't need to act or decide.
 - **Numbers carry the weight:** counts, dollar amounts, date ranges. Say how each was measured.
@@ -40,9 +40,9 @@ Next steps:
 1. ...
 ```
 
-**GitHub or ***REDACTED*** reply (I send it, not you):** 1–3 sentences, casual and direct, lowercase is fine. State the answer or the change, with a link if useful. Example: "Fixed in new commit: a checked-out next fill now always takes priority, and added specs for it."
+**GitHub or chat reply (I send it, not you):** 1–3 sentences, casual and direct, lowercase is fine. State the answer or the change, with a link if useful. Example: "Fixed in new commit: a checked-out next fill now always takes priority, and added specs for it."
 
 ## Format notes
 
-- *****REDACTED***:** standard markdown, tables allowed. Mermaid in a ```mermaid block with simple node labels (no `<br/>` or special characters; they break ***REDACTED***'s renderer). Save to `~/scratch/<topic>/` so I can paste it.
-- **Customer comms:** match existing macros and comms. Search ***REDACTED*** (***REDACTED*** data) or the ***REDACTED*** MCP for precedent.
+- **Docs (wiki, markdown files):** standard markdown, tables allowed. Mermaid in a ```mermaid block with simple node labels (no `<br/>` or special characters; they break some renderers). Save to `~/scratch/<topic>/` so I can paste it.
+- **Customer comms:** match existing macros and comms. Find precedent before inventing wording, and ask me where that precedent lives.

@@ -30,7 +30,6 @@ Runs on Arch Linux and macOS. Where behaviour differs, the OS check is
 │       ├── glance.lua          # LSP peek windows
 │       ├── local-fim.lua       # Local fill-in-the-middle completion
 │       ├── lsp.lua             # nvim-lspconfig + Mason
-│       ├── ***REDACTED***.lua           # vim-***REDACTED*** + vim-test
 │       ├── telescope.lua       # Fuzzy finder
 │       ├── toggleterm.lua      # Terminal management
 │       └── treesitter.lua      # Parsers + highlighting
@@ -60,9 +59,9 @@ looks dead, run `:MasonToolsInstall` then `:TSUpdate`.
 
 ## Key Features
 
-- **LSP**: vtsls (TS/JS), phpactor, ***REDACTED*** (mise/***REDACTED*** aware), pyright, lua_ls
+- **LSP**: vtsls (TS/JS), phpactor, pyright, lua_ls
 - **Folding**: treesitter `foldexpr`, all folds open by default (`foldlevel=99`)
-- **Formatting**: conform.nvim, project-aware (prettier/prettierd, ***REDACTED***, stylua, ***REDACTED***)
+- **Formatting**: conform.nvim, project-aware (prettier/prettierd, php-cs-fixer, stylua)
 - **Completion**: nvim-cmp + LuaSnip, plus local FIM (Tab / Shift-Tab)
 - **Debugging**: nvim-dap + dap-python + dap-view
 - **Git**: gitsigns, fugitive, rhubarb, blame.nvim

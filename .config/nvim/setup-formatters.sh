@@ -17,7 +17,7 @@ fi
 if ! command -v php-cs-fixer &> /dev/null; then
     echo "Note: php-cs-fixer not found globally."
     echo "You can install it via: composer global require friendsofphp/php-cs-fixer"
-    echo "Or use the project-local version in WFE"
+    echo "Or use the project-local version under vendor/bin"
 else
     echo "✓ php-cs-fixer already installed"
 fi

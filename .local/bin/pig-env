@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# pig-env - long-lived shared Gondolin VMs for pi agents. See ~/.pi/gondolin-ext/pig-env.mjs.
+exec node "$HOME/.pi/gondolin-ext/pig-env.mjs" "$@"

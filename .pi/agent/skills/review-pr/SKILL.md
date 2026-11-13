@@ -12,12 +12,12 @@ Goal: I understand exactly how behavior changes, and we're confident nothing uni
 | Level | Use when | Do |
 |---|---|---|
 | `quick` | small or low-risk change, or a first pass | Read the PR, description, linked ticket and diff. Report the behavior change and obvious risks. |
-| `standard` (default) | most PRs | `quick`, plus trace each changed code path end to end including callers and downstream effects. Compare before and after behavior. Check assumptions against production data shapes (***REDACTED*** MCP). Check against repo patterns and prior art. |
-| `max` | high-risk, data-mutating, money or ***REDACTED***-blocking, or when I say "rigorous" | `standard`, plus run every branch and code path locally against the local app, with DB states seeded from real production rows. Exercise edge cases and failure paths (retries, nil data, idempotency, concurrency). Use subagents for parallel path coverage. Every claim must be proven by a run, query or log. Fix or flag every bug found. |
+| `standard` (default) | most PRs | `quick`, plus trace each changed code path end to end including callers and downstream effects. Compare before and after behavior. Check assumptions against real data shapes. Check against repo patterns and prior art. |
+| `max` | high-risk, data-mutating, money- or safety-critical, or when I say "rigorous" | `standard`, plus run every branch and code path locally, with DB states seeded from real rows. Exercise edge cases and failure paths (retries, nil data, idempotency, concurrency). Use subagents for parallel path coverage. Every claim must be proven by a run, query or log. Fix or flag every bug found. |
 
 ## Process
 
-1. `gh pr view` / `gh pr diff`, check out the branch in a worktree, and read the linked ticket (***REDACTED***, ***REDACTED***, ***REDACTED*** thread) and the relevant wiki pages.
+1. `gh pr view` / `gh pr diff`, check out the branch, and read the linked ticket and the relevant wiki pages.
 2. Understand the surrounding code before judging the diff.
 3. Answer: does it solve the stated problem? Is it the simplest approach that fits the codebase? What else does it touch?
 4. Check tests: are they meaningful and not bloated, and does non-trivial logic have coverage?

@@ -11,15 +11,14 @@ Run without stopping for questions. The only stop points are listed below.
 
 1. **Poll** `gh pr checks <n>` and the review threads (GraphQL `reviewThreads`). Space polls to match how long CI usually takes; compare against recent PRs.
 2. **Failing check:**
-   - Read the logs (***REDACTED*** for ***REDACTED***, GitHub Actions / ***REDACTED*** MCP for ***REDACTED*** e2e).
-   - Not caused by this PR (a flake, or broken on `develop`/`main` too): re-run it. If it fails the same way twice, check whether it's a known or recurring flake and note it in the report.
+   - Read the logs in whatever CI system the repo uses.
+   - Not caused by this PR (a flake, or broken on the default branch too): re-run it. If it fails the same way twice, check whether it's a known or recurring flake and note it in the report.
    - Caused by this PR: make the minimal fix, commit, push, and poll again.
-3. **New automated reviewer comment** (Cursor Bugbot, Cursor security or privacy automations, GitHub code quality):
-   - Assess whether it's valid, against the code and production data where relevant.
+3. **New automated reviewer comment** (Bugbot, security or privacy automations, code quality):
+   - Assess whether it's valid, against the code and real data where relevant.
    - Valid: fix it, push, reply with one line ("Fixed in `<sha>`: <what changed>"), and resolve the thread.
-   - Not valid: reply with one line explaining why ("we have a ***REDACTED*** with ***REDACTED***"), and resolve it.
-4. *****REDACTED***:** after every push, comment `/***REDACTED***`. The merge gate is `***REDACTED***`; `@soak` failures don't block.
-5. Repeat until every required check is green and no automated threads are unresolved.
+   - Not valid: reply with one line explaining why, and resolve the thread.
+4. Repeat until every required check is green and no automated threads are unresolved.
 
 ## Stop and hand back to me when
 

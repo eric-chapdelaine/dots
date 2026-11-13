@@ -19,8 +19,13 @@
  *   - QEMU installed (for example, `brew install qemu` on macOS)
  */
 
+import { spawn } from "node:child_process";
+import os from "node:os";
 import path from "node:path";
+import fs from "node:fs";
 import { RealFSProvider, VM } from "@earendil-works/gondolin";
+// @ts-ignore plain JS helper shared with pig-env
+import { GUEST_BOOTSTRAP, guestEnv, gitMounts, imageOptions, networkOptions, toolMounts } from "./vm-env.mjs";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import {
 	type BashOperations,
@@ -44,7 +49,8 @@ import {
 	type WriteOperations,
 } from "@earendil-works/pi-coding-agent";
 
-const GUEST_WORKSPACE = "/workspace";
+// Guest paths equal host paths, so worktree .git pointers and absolute paths keep working.
+const GUEST_WORKSPACE = process.cwd();
 const DEFAULT_GREP_LIMIT = 100;
 
 type TextToolResult<TDetails> = {
@@ -312,18 +318,13 @@ async function executeGondolinGrep(
 	};
 }
 
-function sanitizeEnv(env: NodeJS.ProcessEnv | undefined): Record<string, string> | undefined {
-	if (!env) return undefined;
-	const result: Record<string, string> = {};
-	for (const [key, value] of Object.entries(env)) {
-		if (typeof value === "string") result[key] = value;
-	}
-	return result;
-}
+
+// Only the guest's own env: host values (the local tracing proxy, NODE_OPTIONS, cloud credentials, host PATH) break or leak in the VM.
+let guestBaseEnv: Record<string, string> = guestEnv();
 
 function createGondolinBashOps(vm: VM, localCwd: string, shellPath: string): BashOperations {
 	return {
-		exec: async (command, cwd, { onData, signal, timeout, env }) => {
+		exec: async (command, cwd, { onData, signal, timeout }) => {
 			if (signal?.aborted) throw new Error("aborted");
 			const guestCwd = toGuestPath(localCwd, cwd);
 			const controller = new AbortController();
@@ -340,9 +341,9 @@ function createGondolinBashOps(vm: VM, localCwd: string, shellPath: string): Bas
 					: undefined;
 
 			try {
-				const proc = vm.exec([shellPath, "-lc", command], {
+				const proc = vm.exec([shellPath, "-c", command], {
 					cwd: guestCwd,
-					env: sanitizeEnv(env),
+					env: guestBaseEnv,
 					signal: controller.signal,
 					stdout: "pipe",
 					stderr: "pipe",
@@ -362,8 +363,61 @@ function createGondolinBashOps(vm: VM, localCwd: string, shellPath: string): Bas
 	};
 }
 
+type SharedEnv = { name: string; id: string; pid: number; mounts: string[]; guestEnv?: Record<string, string> };
+const GONDOLIN_BIN = path.join(path.dirname(new URL(import.meta.url).pathname), "node_modules", ".bin", "gondolin");
+
+function readSharedEnv(name: string): SharedEnv {
+	const file = path.join(os.homedir(), ".cache", "pig-env", "envs", `${name}.json`);
+	let env: SharedEnv;
+	try {
+		env = JSON.parse(fs.readFileSync(file, "utf8"));
+	} catch {
+		throw new Error(`pig: shared env "${name}" is not running (start it with: pig-env up ${name} --mount <dir>)`);
+	}
+	try {
+		process.kill(env.pid, 0);
+	} catch {
+		throw new Error(`pig: shared env "${name}" is not running (its owner process ${env.pid} exited)`);
+	}
+	return env;
+}
+
+// Attach mode: bash runs in a VM owned by a pig-env process (shared with other agents).
+function createSharedEnvBashOps(envName: string): BashOperations {
+	return {
+		exec: (command, cwd, { onData, signal, timeout }) =>
+			new Promise((resolve, reject) => {
+				if (signal?.aborted) return reject(new Error("aborted"));
+				const env = readSharedEnv(envName);
+				try {
+					cwd = fs.realpathSync(cwd);
+				} catch {}
+				if (!env.mounts.some((m) => cwd === m || cwd.startsWith(`${m}/`))) {
+					return reject(new Error(`pig: ${cwd} is not mounted in shared env "${envName}" (mounts: ${env.mounts.join(", ")})`));
+				}
+				const envArgs = Object.entries({ ...guestBaseEnv, ...(env.guestEnv ?? {}) }).flatMap(([k, v]) => ["--env", `${k}=${v}`]);
+				const child = spawn(GONDOLIN_BIN, ["exec", "--sock", env.id, "--cwd", cwd, ...envArgs, "--", "/bin/bash", "-c", command], { stdio: ["ignore", "pipe", "pipe"] });
+				let timedOut = false;
+				const timer = timeout && timeout > 0 ? setTimeout(() => { timedOut = true; child.kill("SIGTERM"); }, timeout * 1000) : undefined;
+				const onAbort = () => child.kill("SIGTERM");
+				signal?.addEventListener("abort", onAbort, { once: true });
+				child.stdout.on("data", onData);
+				child.stderr.on("data", onData);
+				child.on("error", reject);
+				child.on("close", (code) => {
+					if (timer) clearTimeout(timer);
+					signal?.removeEventListener("abort", onAbort);
+					if (signal?.aborted) return reject(new Error("aborted"));
+					if (timedOut) return reject(new Error(`timeout:${timeout}`));
+					resolve({ exitCode: code ?? 1 });
+				});
+			}),
+	};
+}
+
 export default function (pi: ExtensionAPI) {
 	const localCwd = process.cwd();
+	const sharedEnvName = process.env.PIG_ENV?.trim() || undefined;
 	const localRead = createReadTool(localCwd);
 	const localWrite = createWriteTool(localCwd);
 	const localEdit = createEditTool(localCwd);
@@ -372,28 +426,59 @@ export default function (pi: ExtensionAPI) {
 	const localFind = createFindTool(localCwd);
 	const localLs = createLsTool(localCwd);
 
+	if (sharedEnvName) {
+		// Files are identity-mounted into the shared VM, so file tools work on the host copies directly; only bash moves.
+		pi.registerTool({
+			...localBash,
+			async execute(id, params, signal, onUpdate) {
+				const tool = createBashTool(localCwd, { operations: createSharedEnvBashOps(sharedEnvName) });
+				return tool.execute(id, params, signal, onUpdate);
+			},
+		});
+		pi.on("user_bash", async () => ({ operations: createSharedEnvBashOps(sharedEnvName) }));
+		pi.on("session_start", async (_event, ctx) => {
+			try {
+				const env = readSharedEnv(sharedEnvName);
+				ctx.ui.setStatus("gondolin", ctx.ui.theme.fg("accent", `pig-env: ${sharedEnvName} (${env.id.slice(0, 8)})`));
+			} catch (error) {
+				ctx.ui.notify(String((error as Error).message), "error");
+			}
+		});
+		pi.on("before_agent_start", async (event) => ({
+			systemPrompt: `${event.systemPrompt}\n\nbash runs inside the shared Gondolin VM "${sharedEnvName}" (pig-env), used by other agents too. Host paths under its mounts are the same paths in the VM. Do not stop services other agents may rely on.`,
+		}));
+		return;
+	}
+
 	let vm: VM | undefined;
 	let vmStarting: Promise<VM> | undefined;
 	let shellPath = "/bin/sh";
 
 	async function startVm(ctx?: ExtensionContext): Promise<VM> {
 		ctx?.ui.setStatus("gondolin", ctx.ui.theme.fg("accent", `Gondolin: starting ${GUEST_WORKSPACE}`));
+		const net = networkOptions();
+		guestBaseEnv = { ...guestEnv(), ...net.env };
+		const mountPaths = [localCwd, ...gitMounts(localCwd)];
 		const created = await VM.create({
 			sessionLabel: `pi ${path.basename(localCwd)}`,
-			vfs: {
-				mounts: {
-					[GUEST_WORKSPACE]: new RealFSProvider(localCwd),
-				},
-			},
+			memory: process.env.PIG_MEMORY || "2G",
+			cpus: Number(process.env.PIG_CPUS || 2),
+			rootfs: { size: process.env.PIG_DISK || "8G" },
+			env: guestBaseEnv,
+			...(net.httpHooks ? { httpHooks: net.httpHooks } : {}),
+			tcp: net.tcp,
+			dns: net.dns,
+			...(await imageOptions(process.env.PIG_IMAGE || undefined)),
+			vfs: { mounts: { ...Object.fromEntries(mountPaths.map((p) => [p, new RealFSProvider(p)])), ...toolMounts() } },
 		});
-		const bashProbe = await created.exec(["/bin/sh", "-lc", "command -v bash || true"]);
+		await created.exec(["/bin/sh", "-c", GUEST_BOOTSTRAP]);
+		const bashProbe = await created.exec(["/bin/sh", "-c", "command -v bash || true"]);
 		shellPath = bashProbe.stdout.trim() || "/bin/sh";
 		vm = created;
 		ctx?.ui.setStatus(
 			"gondolin",
 			ctx.ui.theme.fg("accent", `Gondolin: ${created.id.slice(0, 8)} (${GUEST_WORKSPACE})`),
 		);
-		ctx?.ui.notify(`Gondolin VM ready. ${localCwd} is mounted at ${GUEST_WORKSPACE}.`, "info");
 		return created;
 	}
 
@@ -522,7 +607,7 @@ export default function (pi: ExtensionAPI) {
 	pi.on("before_agent_start", async (event, ctx) => {
 		await ensureVm(ctx);
 		const localLine = `Current working directory: ${localCwd}`;
-		const guestLine = `Current working directory: ${GUEST_WORKSPACE} (Gondolin VM; host workspace mounted from ${localCwd})`;
+		const guestLine = `Current working directory: ${GUEST_WORKSPACE} (tools run in a private Gondolin VM; this directory is mounted at the same path)`;
 		const systemPrompt = event.systemPrompt.includes(localLine)
 			? event.systemPrompt.replace(localLine, guestLine)
 			: `${event.systemPrompt}\n\n${guestLine}`;

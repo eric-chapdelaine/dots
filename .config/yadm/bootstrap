@@ -126,6 +126,35 @@ if [ -d "$HOME/.tmux/plugins/tpm" ]; then
     "$HOME/.tmux/plugins/tpm/bin/install_plugins" >/dev/null 2>&1 || true
 fi
 
+# ── Work dotfiles: private second yadm instance ──────────────────────────────
+# Only on a machine whose class is `work`:
+#   yadm config local.class work
+# Clones work-dots (private) into ~/.config/work-dots + ~/.local/share/work-dots,
+# runs its bootstrap, then re-renders AGENTS.md so the work parts appear.
+class="$(yadm config local.class 2>/dev/null | tr '[:upper:]' '[:lower:]')"
+if [ "$class" = "work" ]; then
+    if ! command -v wyadm >/dev/null 2>&1; then
+        warn "work-dots: wyadm not on PATH (~/.local/bin) — skipping"
+    else
+        if [ -d "$HOME/.local/share/work-dots/repo.git" ]; then
+            log "work-dots: pulling"
+            wyadm pull --ff-only || warn "work-dots: pull failed (local changes?)"
+            wyadm alt || warn "work-dots: alt failed"
+        elif gh api repos/eric-chapdelaine/work-dots >/dev/null 2>&1; then
+            log "work-dots: cloning"
+            wyadm clone git@github.com:eric-chapdelaine/work-dots.git || warn "work-dots: clone failed"
+        else
+            log "work-dots: not reachable from this GitHub account (run 'gh auth login' first), skipping"
+        fi
+        if [ -x "$HOME/.config/work-dots/bootstrap" ]; then
+            log "work-dots: running its bootstrap"
+            "$HOME/.config/work-dots/bootstrap" || warn "work-dots: bootstrap failed"
+        fi
+        log "re-rendering AGENTS.md with the work parts"
+        yadm alt || warn "AGENTS.md: re-render failed"
+    fi
+fi
+
 # ── Shell check ──────────────────────────────────────────────────────────────
 for f in "$HOME/.zshrc" "$HOME/.config/zsh/common.zsh"; do
     [ -f "$f" ] && zsh -n "$f" || true
@@ -134,7 +163,10 @@ done
 log "bootstrap complete"
 warn "Remaining manual steps:"
 cat <<'EOF'
+  - Machine class:    yadm config local.class personal   (or `work` on the Mac)
   - GitHub auth:      gh auth login
+  - Work machine:     yadm config local.class work, then re-run `yadm bootstrap`
+                      (or `wyadm clone git@github.com:eric-chapdelaine/work-dots.git`)
   - pi provider keys: set in ~/.pi/agent/auth.json (never tracked)
   - macOS only:       yabai/skhd need sudoers + Accessibility permissions
   - Arch only:        autorandr profiles are machine-specific; run autorandr --save <name>

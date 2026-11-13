@@ -1,0 +1,65 @@
+{
+  "maxDepth": 1,
+  "maxLive": 2,
+  "mcpAliases": {},
+  "presets": {
+    "low-investigator": {
+      "description": "Cheap, fast lookups and narrow investigations (one hypothesis, one code path, one query).",
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "thinking": "low",
+      "sandbox": "host",
+      "mcp": [
+        "*"
+      ],
+      "mcpReadOnly": true
+    },
+    "investigator": {
+      "description": "Deeper root-cause work or exploring one solution end to end.",
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "thinking": "medium",
+      "sandbox": "host",
+      "mcp": [
+        "*"
+      ],
+      "mcpReadOnly": true
+    },
+    "reviewer": {
+      "description": "Independent code review of a diff or PR (review-pr skill). Reads, never edits.",
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "thinking": "medium",
+      "sandbox": "host",
+      "mcp": [
+        "*"
+      ],
+      "mcpReadOnly": true
+    },
+    "worker": {
+      "description": "The implementer: builds a change in its own worktree and verifies it locally, including running the stack.",
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "thinking": "medium",
+      "sandbox": "host",
+      "mcp": [
+        "*"
+      ],
+      "mcpReadOnly": true
+    },
+    "env-builder": {
+      "description": "Sets up a known environment in a shared pig-env VM (dependencies, databases, a setup script) so other agents can use it. Runs the project's documented setup command if there is one and reports its output; does not improvise around failures.",
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "thinking": "low",
+      "sandbox": "host",
+      "mcp": [],
+      "mcpReadOnly": true
+    },
+    "advisor": {
+      "description": "Only for a decision or direction when stuck, or when the only working option is an ugly solution. Give it the options and evidence; it recommends, it doesn't implement.",
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "thinking": "high",
+      "sandbox": "host",
+      "mcp": [
+        "*"
+      ],
+      "mcpReadOnly": true
+    }
+  }
+}

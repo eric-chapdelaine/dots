@@ -9,11 +9,9 @@ This document covers all custom plugins added to enhance code navigation, contex
 4. [toggleterm.nvim (Terminal Management)](#4-toggletermnvim-terminal-management)
 5. [blame.nvim (Git Blame with Commit Messages)](#5-blamenvim-git-blame-with-commit-messages)
 6. [vim-rhubarb (GitHub Integration)](#6-vim-rhubarb-github-integration)
-7. [vim-***REDACTED*** (***REDACTED*** Navigation)](#7-vim-***REDACTED***-***REDACTED***-navigation)
-8. [vim-test (Run ***REDACTED*** from Neovim)](#8-vim-test-run-***REDACTED***-from-neovim)
-9. [Workflow Examples](#workflow-examples)
-10. [Installation & Setup](#installation--setup)
-11. [Quick Reference Card](#quick-reference-card)
+7. [Workflow Examples](#workflow-examples)
+8. [Installation & Setup](#installation--setup)
+9. [Quick Reference Card](#quick-reference-card)
 
 > **Scope:** this document covers plugins with custom keymaps/behaviour worth
 > explaining. For the full plugin list, directory layout, and requirements see
@@ -56,7 +54,7 @@ This document covers all custom plugins added to enhance code navigation, contex
 
 ### Tips:
 - If folding does nothing, run `:checkhealth` and confirm treesitter parsers
-  built: `:lua =vim.treesitter.language.get_lang('***REDACTED***')`
+  built: `:lua =vim.treesitter.language.get_lang('python')`
 - `zR` first if the buffer looks collapsed
 
 ---
@@ -190,7 +188,7 @@ When inside a terminal, use these keybindings:
 
 **Example 3: REPL Workflow**
 ```
-1. Open your Python/Node/***REDACTED*** file
+1. Open your Python/Node file
 2. Press <leader>t2 to open a Python REPL
 3. Test code snippets in the REPL
 4. Press <leader>t2 to return to your code
@@ -412,7 +410,7 @@ a3347a5 • Add Neovim plugins: folding, context, glance • 2026-02-22
 1. Navigate to the code you want to share
 2. Select the relevant lines in visual mode
 3. Run :GBrowse!
-4. Paste the URL in ***REDACTED***/email - includes line numbers!
+4. Paste the URL in chat or email - includes line numbers!
 ```
 
 **Example 2: Reviewing PR Changes**
@@ -478,131 +476,6 @@ For autocomplete features, generate a personal access token:
 - Ensure you have curl installed: `which curl`
 - Check your `~/.netrc` has the API token
 - Try `:set omnifunc?` to verify completion is set
-
----
-
-## 7. vim-***REDACTED*** (***REDACTED*** Navigation)
-
-### What it does:
-- Teaches Neovim about ***REDACTED*** project conventions so you can jump between related files instantly
-- Understands the naming rules ***REDACTED*** uses (controller → spec, model → view, routes → controller, etc.)
-- Enhances `gf` (go to file) so it works on ***REDACTED***-style references like `:***REDACTED***_options` in routes
-- Provides ex commands for navigating to any ***REDACTED*** file type by name
-
-### Commands:
-
-**`:A`** — Alternate file (most useful command)
-- In a controller → jumps to its spec
-- In a spec → jumps back to the source file
-- In a model → jumps to its spec
-
-**`:Econtroller <name>`** — Open a controller by name
-- `:Econtroller ***REDACTED***_options` → opens `app/controllers/.../***REDACTED***_options_controller.rb`
-- `:Econtroller api/internal/catalog/***REDACTED***s` → opens that nested controller
-
-**`:Emodel <name>`** — Open a model by name
-- `:Emodel ***REDACTED***` → opens `app/models/***REDACTED***.rb`
-- `:Emodel lab/order` → opens `app/models/lab/order.rb`
-
-**`:Espec <name>`** — Open a spec by name
-- `:Espec models/***REDACTED***` → opens `spec/models/***REDACTED***_spec.rb`
-
-**`:Eroutes`** — Open `config/routes.rb`
-
-**`:Emigration`** — Open the most recent migration
-
-**`:Eschema`** — Open `db/schema.rb`
-
-**`:Einitializer <name>`** — Open an initializer by name
-
-**`gf`** — Go to file (enhanced by vim-***REDACTED***)
-- Cursor on `:***REDACTED***_options` in routes.rb → opens the controller
-- Cursor on a `render 'partial_name'` → opens the partial
-- Cursor on a `require` path → opens the file
-
-### Usage:
-
-**Jump to the controller for a route:**
-```
-1. Open config/routes.rb
-2. Put cursor on :***REDACTED***_options
-3. Press gf → opens Api::External::***REDACTED***OptionsController
-```
-
-**Jump between controller and spec:**
-```
-1. Open any controller (e.g. ***REDACTED***s_controller.rb)
-2. Press :A → jumps to spec/controllers/.../***REDACTED***s_controller_spec.rb
-3. Press :A again → jumps back to the controller
-```
-
-**Open any model by name:**
-```
-:Emodel care/plan     → app/models/care/plan.rb
-:Emodel ***REDACTED***_category  → app/models/***REDACTED***_category.rb
-```
-
-### Tips:
-- `:A` is the command you'll use most — build the muscle memory
-- All `E` commands support tab-completion
-- Works with nested namespaces using `/` as the separator
-- `gf` on a partial name in a `render` call opens the partial file
-
----
-
-## 8. vim-test (Run ***REDACTED*** from Neovim)
-
-### What it does:
-- Runs ***REDACTED*** tests without leaving Neovim
-- Runs the nearest test, the whole file, or the last test with single keymaps
-- Output appears in Terminal 1 (the horizontal split at the bottom)
-- Runs tests via `docker compose exec ***REDACTED*** bundle exec ***REDACTED***` (inside the ***REDACTED*** container)
-
-### Keybindings:
-- `<leader>rn` - Run the test **nearest** to your cursor
-- `<leader>rf` - Run all tests in the **current file**
-- `<leader>rl` - **Re-run** the last test that was run
-- `<leader>rs` - Run the **full suite** (use sparingly — runs everything)
-
-### Usage:
-
-**Run a single test:**
-```
-1. Open a spec file (e.g. spec/models/***REDACTED***_spec.rb)
-2. Put your cursor anywhere inside an `it` block
-3. Press <leader>rn → runs just that one example
-4. Output appears in the terminal split at the bottom
-```
-
-**Run all tests in a file:**
-```
-1. Open any spec file
-2. Press <leader>rf → runs the whole file
-3. Toggle Terminal 1 (<leader>tt) to see full output if it scrolled past
-```
-
-**Re-run after making a fix:**
-```
-1. A test fails
-2. Edit the implementation
-3. Press <leader>rl → re-runs the exact same test without moving your cursor
-```
-
-### Workflow: TDD loop
-```
-1. Open the spec file and navigate to the test you're working on
-2. Press <leader>rn — test fails (expected)
-3. Press <leader>tt to read the failure output
-4. Press <leader>tt again to return to code
-5. Edit the implementation
-6. Press <leader>rl to re-run — no need to navigate back to the spec
-7. Repeat until green
-```
-
-### Tips:
-- `<leader>rn` detects the nearest `it`, `describe`, or `context` block — works from anywhere inside it
-- The terminal persists between runs so you can scroll back through output
-- `<leader>rl` is the most-used binding — run it from anywhere after a failure
 
 ---
 
@@ -765,26 +638,6 @@ To verify everything is working:
 | `:GBrowse!` | Copy GitHub URL |
 | `<C-X><C-O>` | Autocomplete (in commits) |
 
-### ***REDACTED*** Navigation
-| Command | Action |
-|---------|--------|
-| `:A` | Alternate file (controller ↔ spec) |
-| `:Econtroller <name>` | Open controller by name |
-| `:Emodel <name>` | Open model by name |
-| `:Espec <name>` | Open spec by name |
-| `:Eroutes` | Open routes.rb |
-| `:Emigration` | Open latest migration |
-| `:Eschema` | Open schema.rb |
-| `gf` | Go to ***REDACTED*** file under cursor |
-
-### ***REDACTED*** (vim-test)
-| Key | Action |
-|-----|--------|
-| `<leader>rn` | Run nearest test |
-| `<leader>rf` | Run test file |
-| `<leader>rl` | Re-run last test |
-| `<leader>rs` | Run full suite |
-
 ---
 
 ## Summary of Changes
@@ -798,8 +651,6 @@ This configuration adds the following capabilities to Neovim:
 6. **Git Blame with Commit Messages** - See why code changed, not just who changed it
 7. **GitHub Integration** - Open files and commits on GitHub, autocomplete issues in commits
 8. **Auto-starting LSP** - Language servers automatically start when opening files
-9. *****REDACTED*** Navigation** - Jump between controllers, models, specs, and routes by convention
-10. *****REDACTED*** Runner** - Run nearest test, file, or last test without leaving Neovim
 
 All features work together to create a powerful code navigation and development environment.
 
@@ -811,4 +662,3 @@ The following plugin files are configured:
 - `lua/plugins/context.lua` - nvim-treesitter-context
 - `lua/plugins/glance.lua` - LSP peek windows
 - `lua/plugins/toggleterm.lua` - Terminal management
-- `lua/plugins/***REDACTED***.lua` - vim-***REDACTED*** (***REDACTED*** navigation) + vim-test (***REDACTED*** runner)

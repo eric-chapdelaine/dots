@@ -23,7 +23,6 @@ return {
         'markdown',
         'markdown_inline',
         'query',
-        '***REDACTED***',
         'sql',
         'tsx',
         'typescript',
@@ -41,7 +40,7 @@ return {
         treesitter.install(missing, { summary = false }):wait(300000)
       end
 
-      local indent_disabled = { '***REDACTED***', 'typescript', 'javascript', 'tsx', 'jsx' }
+      local indent_disabled = { 'typescript', 'javascript', 'tsx', 'jsx' }
 
       vim.api.nvim_create_autocmd('FileType', {
         group = vim.api.nvim_create_augroup('emchap4-treesitter', { clear = true }),

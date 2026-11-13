@@ -68,7 +68,7 @@ export DOCKER_DEFAULT_PLATFORM=linux/amd64
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-# mise (runtime version manager, pins ***REDACTED***/node per project)
+# mise (runtime version manager, pins language runtimes per project)
 [ -x /opt/homebrew/bin/mise ] && eval "$(/opt/homebrew/bin/mise activate zsh)"
 
 # qmd CLI (local markdown/wiki search)
