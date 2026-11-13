@@ -1,4 +1,5 @@
 {
+  "provider": "openrouter",
   "maxDepth": 1,
   "maxLive": 2,
   "mcpAliases": {},

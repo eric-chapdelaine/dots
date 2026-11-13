@@ -182,8 +182,10 @@ Not verified. Messaging uses `pi-intercom`, scoped per tree: a root session and
 everything it spawns form one private pool.
 
 **Presets** live in `presets.json` and fix model, thinking level, sandbox and
-the MCP ceiling. Each spawn picks the preset and the MCP subset it needs.
-Every machine has the same six preset names and descriptions:
+the MCP ceiling. Each spawn picks the preset and the MCP subset it needs. A
+preset (or the whole file) may also pin `provider` for models that several
+providers expose under the same id. Every machine has the same six preset
+names and descriptions:
 
 | Preset | personal (this repo) | work (overlay in `work-dots`) |
 |---|---|---|

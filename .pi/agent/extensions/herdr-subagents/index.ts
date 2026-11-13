@@ -31,12 +31,14 @@ let defaultVmImage = process.env.PIG_DEFAULT_IMAGE || "";
 type Preset = {
 	description: string;
 	model: string;
+	// Only needed when several providers expose the same model id; pi then refuses to guess.
+	provider?: string;
 	thinking: string;
 	sandbox: "host" | "vm" | "env";
 	mcp: string[];
 	mcpReadOnly: boolean;
 };
-type PresetFile = { mcpAliases: Record<string, string>; presets: Record<string, Preset>; maxDepth?: number; maxLive?: number; vmImage?: string };
+type PresetFile = { mcpAliases: Record<string, string>; presets: Record<string, Preset>; maxDepth?: number; maxLive?: number; vmImage?: string; provider?: string };
 type AgentRecord = {
 	name: string;
 	desc: string;
@@ -85,6 +87,7 @@ function loadPresets(): PresetFile {
 			maxDepth: next.maxDepth ?? merged.maxDepth,
 			maxLive: next.maxLive ?? merged.maxLive,
 			vmImage: next.vmImage ?? merged.vmImage,
+			provider: next.provider ?? merged.provider,
 		};
 	}
 	maxDepth = merged.maxDepth ?? maxDepth;
@@ -276,7 +279,15 @@ async function spawnSubagent(params: any, ctx: ExtensionContext) {
 		CLOUDSDK_CONFIG: "/dev/null",
 		GOOGLE_APPLICATION_CREDENTIALS: "/dev/null",
 	};
-	const piArgs = ["--model", preset.model, "--thinking", preset.thinking, "--mcp-config", mcpConfigPath, "--append-system-prompt", addendumPath, "--name", `subagent - ${desc}`];
+	const provider = preset.provider ?? file.provider;
+	const piArgs = [
+		...(provider ? ["--provider", provider] : []),
+		"--model", preset.model,
+		"--thinking", preset.thinking,
+		"--mcp-config", mcpConfigPath,
+		"--append-system-prompt", addendumPath,
+		"--name", `subagent - ${desc}`,
+	];
 	if (sandbox === "vm") {
 		if (defaultVmImage) env.PIG_IMAGE = defaultVmImage;
 		piArgs.push("-e", PIG_EXT);
