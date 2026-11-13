@@ -30,6 +30,7 @@
 .pi/agent/mcp-*.json
 .pi/agent/web-search.json
 .pi/agent/pi-subagents/
+.pi/agent/herdr-subagents/
 .pi/agent/npm/.gitignore
 
 
