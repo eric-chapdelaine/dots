@@ -106,6 +106,22 @@ if ! command -v gondolin >/dev/null 2>&1; then
     [ -f "$gbin" ] && ln -sf "$gbin" "$HOME/.local/bin/gondolin"
 fi
 
+# ── qmd: search for the personal wiki at ~/wiki ──────────────────────────────
+# Personal machines only. The MacBook (class=work) reaches qmd through the nvm
+# alias in .config/zsh/darwin.zsh and has no ~/wiki to search. Installed into
+# ~/.local for the same reason as gondolin, and `npm --prefix` leaves no bin
+# link, so create it by hand. The wiki itself is machine state, not tracked here.
+if [ "$(yadm config local.class 2>/dev/null | tr '[:upper:]' '[:lower:]')" != "work" ] \
+    && ! command -v qmd >/dev/null 2>&1; then
+    log "qmd: installing CLI to ~/.local (wiki search)"
+    npm install --prefix "$HOME/.local" --silent @tobilu/qmd \
+        || warn "qmd: CLI install failed — wiki search unavailable"
+    qbin="$HOME/.local/node_modules/@tobilu/qmd/bin/qmd"
+    if [ -f "$qbin" ]; then
+        ln -sf "$qbin" "$HOME/.local/bin/qmd"
+    fi
+fi
+
 # ── Neovim: parsers + LSP servers + formatters ───────────────────────────────
 # lazy.nvim bootstraps itself on first launch; Mason needs a real launch.
 if command -v nvim >/dev/null 2>&1; then
