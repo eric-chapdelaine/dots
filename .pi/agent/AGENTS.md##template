@@ -39,4 +39,6 @@
 {% endif %}
 {% if yadm.os == "Linux" %}
 {% include "AGENTS.parts/walky-talky.md" %}
+
+{% include "AGENTS.parts/linux/knowledge-base.md" %}
 {% endif %}
