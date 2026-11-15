@@ -15,9 +15,10 @@
 --      exactly the churn being avoided. This includes Neovim's *runtime*
 --      markdown queries, which conceal delimiters on their own — see
 --      `strip_conceal_blockers` at the bottom of this file.
---   4. No virt_lines (heading borders, code borders, table top/bottom rules).
---      They do not shift columns, but they insert screen rows, which makes
---      scrolling and `j`/`k` targets feel wrong.
+--   4. No virt_lines (heading borders, code borders). They do not shift
+--      columns, but they insert screen rows, which makes scrolling and
+--      `j`/`k` targets feel wrong. Tables are the one exception, and only for
+--      tables that do not fit the window: see `pipe_table.wrap` below.
 --
 -- What is left is decoration that changes *colour and same-width glyphs in
 -- place*: heading foreground/background, code block background, `-` → `●`,
@@ -140,24 +141,35 @@ return {
       --   cell = 'padded'  -> pads cells per column, so rows line up
       --                       (this is the bit that actually makes tables
       --                       readable; 'overlay' would do no alignment)
-      --   wrap   = false   -> don't reflow cells into extra rows when the
-      --                       window is narrow; wrapping depends on window
-      --                       width and rewrites rows wholesale
-      --   border_enabled = false -> no ┌───┐/└───┘ virt_lines above and below
-      --                       (they add screen rows); the ├───┼───┤ rule
-      --                       under the header is always drawn and is enough
+      --   wrap   = true    -> if the padded table is wider than the window,
+      --                       re-draw the whole table as virtual lines with
+      --                       columns shrunk to fit and cell text wrapped
+      --                       inside them. Padded alignment alone cannot do
+      --                       this: it pads to the width of the *source*, so
+      --                       one long cell (or a narrow split screen) pushes
+      --                       the row past the window and Neovim's own soft
+      --                       wrap breaks the grid. This is the same thing pi
+      --                       does in its TUI, and it is why a resize or a
+      --                       narrow split keeps a real table instead of a
+      --                       soft-wrapped mess.
+      --   border_enabled = true -> ┌─┬─┐/└─┴─┘ rules. They are drawn over the
+      --                       blank lines around the table when there are any
+      --                       (border_virtual = false), so in the common case
+      --                       they cost no screen rows at all.
       --
-      -- With anti_conceal off, the padded alignment now holds on the cursor
-      -- row too, instead of snapping back to raw `| a | b |` when you enter
-      -- the table. That was the all-or-nothing behaviour being complained
-      -- about.
+      -- What `wrap` costs: a replaced row has no editable screen cells, so the
+      -- plugin drops the replacement on the row the cursor is on
+      -- (lua/render-markdown/core/ui.lua:209). The row you are editing shows
+      -- raw markdown, and only that row: rows that fit keep the padded render
+      -- and stay put under the cursor, so this cannot be avoided without
+      -- giving up wrapped cells altogether.
       pipe_table = {
         enabled = true,
         cell = "padded",
-        wrap = false,
+        wrap = true,
         padding = 1,
         min_width = 0,
-        border_enabled = false,
+        border_enabled = true,
         style = "normal",
         -- Same glyph as the rest of the rule, so the header separator is one
         -- clean line instead of `┼━───━┼` mixed-weight segments.
