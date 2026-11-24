@@ -16,6 +16,7 @@ Run without stopping for questions. The only stop points are listed below.
    - Caused by this PR: make the minimal fix, commit, push, and poll again.
 3. **New automated reviewer comment** (Bugbot, security or privacy automations, code quality):
    - Assess whether it's valid, against the code and real data where relevant.
+   - Write every reply and any PR description edit per the `communicate` skill.
    - Valid: fix it, push, reply with one line ("Fixed in `<sha>`: <what changed>"), and resolve the thread.
    - Not valid: reply with one line explaining why, and resolve the thread.
 4. Repeat until every required check is green and no automated threads are unresolved.

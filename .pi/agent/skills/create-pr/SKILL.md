@@ -28,7 +28,7 @@ description: Implement, verify and open a pull request (single or stacked) with 
 
 ## 4. Describe it
 
-Use the repo's PR template. Keep every section. Write per the `communicate` skill: a bird's-eye view for a reviewer who can read the code for specifics.
+Use the repo's PR template. Keep every section. Read the `communicate` skill before writing and follow all of it, including its writing style rules (no bold or label-style bullet lead-ins, no em dashes, no LLM tells). Give a bird's-eye view for a reviewer who can read the code for specifics. Re-read the finished body against those rules before creating or editing the PR.
 
 - **Problem:** what breaks or is missing, for whom, and how we know (ticket or thread link, sizing).
 - **Solution:** the high-level behavior change in a few bullets. A mermaid diagram if a flow is easier to see than read.
